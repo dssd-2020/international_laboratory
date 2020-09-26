@@ -1,0 +1,8 @@
+*.sqlite3
+*.pyc
+*/migrations/*
+*/__pycache__/*
+*.cpython-36.pyc
+*/databases.py
+*media/avatars/*
+.idea/
