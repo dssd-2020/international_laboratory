@@ -18,24 +18,9 @@ class Activity(models.Model):
         return self.name
 
 
-class Member(models.Model):
-    first_name = models.CharField(_("Nombre"), max_length=150)
-    last_name = models.CharField(_("Apellido"), max_length=150)
-
-    class Meta:
-        verbose_name = _("Miembro del equipo")
-        verbose_name_plural = _("Miembros del equipo")
-
-    def __unicode__(self):
-        return u"%s %s" % self.first_name % self.last_name
-
-    def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
-
-
 class Protocol(models.Model):
     name = models.CharField(_("Nombre"), max_length=150)
-    responsible = models.ForeignKey(Member, verbose_name="Responsable", on_delete=models.RESTRICT)
+    responsible = models.CharField(_("Responsable"), max_length=10)
     start_date = models.DateTimeField(_("Fecha de inicio"))
     end_date = models.DateTimeField(_("Fecha de fin"))
     order = models.IntegerField(_("Orden de ejecución"), null=False)
@@ -55,8 +40,8 @@ class Protocol(models.Model):
 
 
 class ActivityProtocol(models.Model):
-    protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", on_delete=models.DO_NOTHING())
-    activity = models.ForeignKey(Activity, verbose_name="Actividad", on_delete=models.DO_NOTHING())
+    protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", on_delete=models.CASCADE)
+    activity = models.ForeignKey(Activity, verbose_name="Actividad", on_delete=models.CASCADE)
     result = models.CharField(_("Resultado"), max_length=150)
     approved = models.BooleanField(_("Aprobado"), default=False)
 
@@ -75,8 +60,8 @@ class Project(models.Model):
     name = models.CharField(_("Nombre"), max_length=150)
     start_date = models.DateTimeField(_("Fecha de inicio"))
     end_date = models.DateTimeField(_("Fecha de fin"))
-    project_manager = models.ForeignKey(Member, verbose_name="Jefe de proyecto", on_delete=models.RESTRICT)
-    protocols = models.ManyToManyField(Activity, through='ProtocolProject', verbose_name="Protocolos")
+    project_manager = models.CharField(_("Jefe de proyecto"), max_length=10)
+    protocols = models.ManyToManyField(Protocol, through='ProtocolProject', verbose_name="Protocolos")
 
     class Meta:
         verbose_name = _("Proyecto")
@@ -90,8 +75,8 @@ class Project(models.Model):
 
 
 class ProtocolProject(models.Model):
-    protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", on_delete=models.DO_NOTHING())
-    project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.DO_NOTHING())
+    protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.CASCADE)
     result = models.CharField(_("Resultado"), max_length=150)
     approved = models.BooleanField(_("Aprobado"), default=False)
 
