@@ -7,3 +7,4 @@
 *media/avatars/*
 .idea/
 .vscode/
+.env
