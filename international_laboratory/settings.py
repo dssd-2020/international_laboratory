@@ -14,18 +14,19 @@ from pathlib import Path
 
 # from django.conf.global_settings import DATABASES
 
-# from .databases import *
+from .databases import *
 import dj_database_url
 import psycopg2
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+# BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+#SECRET_KEY = os.environ.get('SECRET_KEY')
 SECRET_KEY = '&(en3@ys(7y1od4y%uj2yi(f-3#4z5o5&k7vapsy5yoy%p^lc@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -116,21 +117,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-conn = psycopg2.connect(os.environ.get('DATABASE_URL'), sslmode='require')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('NAME'),
-        'USER': os.environ.get('USER'),
-        'PASSWORD': os.environ.get('PASSWORD'),
-        'HOST': os.environ.get('HOST'),
-        'PORT': '5432',
-        'OPTIONS': {
-                    'sslmode': 'require',
-                },
-    }
-}
-
+# conn = psycopg2.connect(os.environ.get('DATABASE_URL'), sslmode='require')
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
 DATABASES['default'].update(db_from_env)
