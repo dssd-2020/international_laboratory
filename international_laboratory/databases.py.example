@@ -12,13 +12,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 #    }
 # }
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'international_laboratory',
+#        'USER': 'international_laboratory',
+#        'PASSWORD': 'password_local',
+#        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
+#        'PORT': '5432',
+#    }
+#}
+
+DATABASE_URL =
+NAME =
+USER =
+PASSWORD =
+HOST = 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'international_laboratory',
-        'USER': 'international_laboratory',
-        'PASSWORD': 'password_local',
-        'HOST': 'localhost',  # Or an IP Address that your DB is hosted on
+        'NAME': NAME,
+        'USER': USER,
+        'PASSWORD': PASSWORD,
+        'HOST': HOST,
         'PORT': '5432',
+        'OPTIONS': {
+                    'sslmode': 'require',
+                },
     }
 }
