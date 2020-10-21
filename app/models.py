@@ -62,6 +62,7 @@ class Project(models.Model):
     end_date = models.DateTimeField(_("Fecha de fin"))
     project_manager = models.CharField(_("Jefe de proyecto"), max_length=10)
     protocols = models.ManyToManyField(Protocol, through='ProtocolProject', verbose_name="Protocolos")
+    active = models.BooleanField(_("Activo"), default=True)
 
     class Meta:
         verbose_name = _("Proyecto")
