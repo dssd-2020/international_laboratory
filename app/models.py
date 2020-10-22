@@ -20,7 +20,6 @@ class Activity(models.Model):
 
 class Protocol(models.Model):
     name = models.CharField(_("Nombre"), max_length=150)
-    responsible = models.CharField(_("Responsable"), max_length=10)
     start_date = models.DateTimeField(_("Fecha de inicio"))
     end_date = models.DateTimeField(_("Fecha de fin"))
     order = models.IntegerField(_("Orden de ejecución"), null=False)
@@ -80,6 +79,7 @@ class ProtocolProject(models.Model):
     project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.CASCADE)
     result = models.CharField(_("Resultado"), max_length=150)
     approved = models.BooleanField(_("Aprobado"), default=False)
+    responsible = models.CharField(_("Responsable"), max_length=10, default="1")
 
     class Meta:
         verbose_name = _("Protocolo en proyecto")
