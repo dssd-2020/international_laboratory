@@ -11,7 +11,7 @@ class ProtocolForm(ModelForm):
     class Meta:
         model = Protocol
         fields = '__all__'
-        exclude = ['responsible']
+        # exclude = ['responsible']
 
 class ProjectForm(ModelForm):
     class Meta:
