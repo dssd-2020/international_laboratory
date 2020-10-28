@@ -41,7 +41,6 @@ class Protocol(models.Model):
 class ActivityProtocol(models.Model):
     protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", on_delete=models.CASCADE)
     activity = models.ForeignKey(Activity, verbose_name="Actividad", on_delete=models.CASCADE)
-    result = models.CharField(_("Resultado"), max_length=150)
     approved = models.BooleanField(_("Aprobado"), default=False)
 
     class Meta:
