@@ -1,9 +1,80 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block title %}
+    - Crear proyecto
+{% endblock %}
 
 {% block content %}
-    <h2>Crear nuevo proyecto</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Guardar</button>
-    </form>
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Crear nuevo proyecto</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="new-project-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="project-name"
+                               class="province-font-medium"
+                        >
+                            Nombre del proyecto
+                        </label>
+                        <input type="text"
+                               id="project-name"
+                               name="project-name"
+                               class="form-control"
+                               placeholder="Completar"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="project-start-date"
+                               class="province-font-medium"
+                        >
+                            Fecha de inicio del proyecto
+                        </label>
+                        <input type="date"
+                               id="project-start-date"
+                               name="project-start-date"
+                               class="form-control"
+                        >
+                    </div>
+                    <div class="form-group col required">
+                        <label for="project-end-date"
+                               class="province-font-medium"
+                        >
+                            Fecha de finalización del proyecto
+                        </label>
+                        <input type="date"
+                               id="project-end-date"
+                               name="project-end-date"
+                               class="form-control"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="project-manager"
+                               class="province-font-medium"
+                        >
+                            Jefe del proyecto
+                        </label>
+                        <input type="text"
+                               id="project-manager"
+                               name="project-manager"
+                               class="form-control"
+                               value="{{ project_manager }}"
+                               readonly
+                        >
+                    </div>
+                </div>
+
+                <button type="submit" class="save btn btn-default">Guardar</button>
+            </form>
+
+        </div>
+    </div>
 {% endblock %}

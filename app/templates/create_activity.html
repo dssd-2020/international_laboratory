@@ -1,10 +1,49 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    - Crear actividad
+{% endblock %}
 
 {% block content %}
-  <h2>Crear nueva actividad</h2>
-  <form method="POST" class="post-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="save btn btn-default">Guardar</button>
-  </form>
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Crear nueva actividad</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="new-activity-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="activity-name"
+                               class="province-font-medium"
+                        >
+                            Nombre de la actividad
+                        </label>
+                        <input type="text"
+                               id="activity-name"
+                               name="activity-name"
+                               class="form-control"
+                               placeholder="Completar"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col text-right">
+                        <button type="button"
+                                id="new-activity-submit"
+                                class="btn btn-primary-blue province-font-bold">Guardar
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% include "alert_error.html" %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "js/create_activity.js" %}"></script>
 {% endblock %}
