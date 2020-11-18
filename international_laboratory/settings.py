@@ -117,6 +117,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 # conn = psycopg2.connect(os.environ.get('DATABASE_URL'), sslmode='require')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
