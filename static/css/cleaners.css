@@ -1,0 +1,29 @@
+/* Cleaner complementos inputs y botones por parte de los navegadores */
+
+.btn,
+button,
+input,
+select,
+textarea {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
+
+a, a:hover {
+    color: inherit; /* Mantiene el azul */
+    text-decoration: inherit; /* Sin subrayado */
+}
+
+button:disabled {
+    cursor: initial;
+}

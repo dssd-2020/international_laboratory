@@ -1,0 +1,13 @@
+/* Links */
+
+.link {
+    color: var(--blue-link);
+    font-family: "Roboto-Medium", Helvetica, Arial, sans-serif !important;
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
+.link:hover,
+.link:focus {
+    color: var(--blue-link);
+}

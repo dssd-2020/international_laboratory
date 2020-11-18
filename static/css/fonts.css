@@ -1,0 +1,48 @@
+/* Declaración de las fuentes */
+
+@font-face {
+    font-family: "Roboto-Light";
+    src: url("../fonts/Roboto-Light.ttf");
+}
+
+@font-face {
+    font-family: "Roboto-Medium";
+    src: url("../fonts/Roboto-Medium.ttf");
+}
+
+@font-face {
+    font-family: "Roboto-Regular";
+    src: url("../fonts/Roboto-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Roboto-Bold";
+    src: url("../fonts/Roboto-Bold.ttf");
+}
+
+@font-face {
+    font-family: "Roboto-Black";
+    src: url("../fonts/Roboto-Black.ttf");
+}
+
+/* Clases para utilizar las fuentes */
+
+.province-font-light {
+    font-family: "Roboto-Light", Helvetica, Arial, sans-serif !important;
+}
+
+.province-font-medium {
+    font-family: "Roboto-Medium", Helvetica, Arial, sans-serif !important;
+}
+
+.province-font-regular {
+    font-family: "Roboto-Regular", Helvetica, Arial, sans-serif !important;
+}
+
+.province-font-bold {
+    font-family: "Roboto-Bold", Helvetica, Arial, sans-serif !important;
+}
+
+.province-font-black {
+    font-family: "Roboto-Black", Helvetica, Arial, sans-serif !important;
+}
