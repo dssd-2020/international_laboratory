@@ -91,7 +91,8 @@ const createProtocol = (name, start_date, end_date, order, local, points, activi
             order: order,
             local: local,
             points: points,
-            activities: activities
+            activities: activities,
+            activities_length: activities.length
         }
     }).done(
         (data) => {
