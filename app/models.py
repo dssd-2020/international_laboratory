@@ -24,7 +24,7 @@ class Protocol(models.Model):
     end_date = models.DateTimeField(_("Fecha de fin"))
     order = models.IntegerField(_("Orden de ejecución"), null=False)
     is_local = models.BooleanField(_("Es local"), default=True)
-    points = models.IntegerField(_("Puntaje necesario"), default=0)
+    points = models.FloatField(_("Puntaje necesario"), default=0)
     activities = models.ManyToManyField(Activity, through='ActivityProtocol', verbose_name="Actividades")
 
     class Meta:
