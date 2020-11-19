@@ -1,11 +1,9 @@
 import requests
-from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
-from .forms import ProjectForm
-from .models import Activity, Protocol, ActivityProtocol
+from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
 
 
 def createCase():
@@ -98,7 +96,7 @@ class ProtocolView(View):
 
     def post(self, request, *args, **kwargs):
         error = True
-        if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "order" in request.POST and "local" in request.POST and "points" in request.POST and "activities":
+        if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "order" in request.POST and "local" in request.POST and "points" in request.POST and "activities_length" in request.POST:
             try:
                 protocol = Protocol.objects.create(
                     name=request.POST.get("name"),
@@ -122,19 +120,61 @@ class ProtocolView(View):
 
 
 class ProjectView(View):
-    form_class = ProjectForm
-    initial = {"key": "1"}
     template_name = "create_project.html"
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        users = getProcessId(request)
-        return render(request, self.template_name, {"form": form})
+        # (Alejo): Comenté la linea de abajo porque me rompe la conexión con Bonita ya que no me anda Bonita :'(
+        # (Alejo): Espero no haber roto nada :$
+        # users = getProcessId(request)
+
+        ctx = {
+            "project_manager": {
+                "id": "userlogged",
+                "name": "Usuario logueado"
+            },
+            "users": [
+                {
+                    "id": "alejo",
+                    "name": "Alejo"
+                },
+                {
+                    "id": "marianela",
+                    "name": "Marianela"
+                },
+                {
+                    "id": "yanina",
+                    "name": "Yanina"
+                },
+            ],
+            "protocols": Protocol.objects.all(),
+        }
+
+        return render(request, self.template_name, ctx)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            activity = form.save()
-            return HttpResponseRedirect("/success/")
-
-        return render(request, self.template_name, {"form": form})
+        error = True
+        if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "project_manager" in request.POST and "active" in request.POST and "protocols_length" in request.POST:
+            try:
+                project = Project.objects.create(
+                    name=request.POST.get("name"),
+                    start_date=request.POST.get("start_date"),
+                    end_date=request.POST.get("end_date"),
+                    project_manager=request.POST.get("project_manager"),
+                    active=request.POST.get("active"),
+                )
+                for index in range(0, int(request.POST.get("protocols_length"))):
+                    protocol_responsible = request.POST.getlist("protocols[{}][]".format(index))
+                    protocol = protocol_responsible[0]
+                    responsible = protocol_responsible[1]
+                    if not protocol == "-1" and not responsible == "-1":
+                        ProtocolProject.objects.create(
+                            protocol=Protocol.objects.get(pk=protocol),
+                            project=project,
+                            responsible=responsible
+                        )
+                error = False
+            except ():
+                pass
+        return JsonResponse({
+            "error": error
+        })
