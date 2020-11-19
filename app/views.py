@@ -184,11 +184,33 @@ class LocalExecutionView(View):
     template_name = "local_execution.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
+        protocol_id = 6
+        protocol = Protocol.objects.get(pk=protocol_id)
+        activities = protocol.activities.all()
+        ctx = {
+            "protocol_id": protocol_id,
+            "activities": activities,
+        }
+        return render(request, self.template_name, ctx)
 
     def post(self, request, *args, **kwargs):
         error = True
-        print(request.POST)
+        if "protocol" in request.POST:
+            protocol = Protocol.objects.get(pk=request.POST.get("protocol"))
+            activities = protocol.activities.all()
+            try:
+                for activity in activities:
+                    if "activities[{}]".format(activity.id) in request.POST:
+                        activity_protocol = ActivityProtocol.objects.get(
+                            protocol=protocol,
+                            activity=activity
+                        )
+                        activity_protocol.approved = request.POST.get("activities[{}]".format(activity.id))
+                        activity_protocol.save()
+                error = False
+            except ():
+                pass
         return JsonResponse({
             "error": error
         })
