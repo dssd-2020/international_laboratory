@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     - Crear proyecto
@@ -34,7 +35,7 @@
                         <label for="project-start-date"
                                class="province-font-medium"
                         >
-                            Fecha de inicio del proyecto
+                            Fecha de inicio
                         </label>
                         <input type="date"
                                id="project-start-date"
@@ -46,7 +47,7 @@
                         <label for="project-end-date"
                                class="province-font-medium"
                         >
-                            Fecha de finalización del proyecto
+                            Fecha de finalización
                         </label>
                         <input type="date"
                                id="project-end-date"
@@ -55,26 +56,99 @@
                         >
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="form-row align-items-end">
                     <div class="form-group col required">
-                        <label for="project-manager"
+                        <label for="project-manager-name"
                                class="province-font-medium"
                         >
-                            Jefe del proyecto
+                            Jefe de proyecto
                         </label>
                         <input type="text"
-                               id="project-manager"
-                               name="project-manager"
+                               id="project-manager-name"
+                               name="project-manager-name"
                                class="form-control"
-                               value="{{ project_manager }}"
+                               value="{{ project_manager.name }}"
                                readonly
                         >
+                        <input type="hidden"
+                               id="project-manager"
+                               name="project-manager"
+                               value="{{ project_manager.id }}"
+                        >
+                    </div>
+                    <div class="form-group col-3 text-center">
+                        <div class="form-check">
+                            <input type="checkbox"
+                                   id="project-active"
+                                   name="project-active"
+                                   class="form-check-input"
+                            >
+                            <label for="project-active"
+                                   class="form-check-label"
+                            >
+                                Activo
+                            </label>
+                        </div>
                     </div>
                 </div>
-
-                <button type="submit" class="save btn btn-default">Guardar</button>
+                <div class="form-row align-items-end">
+                    <div class="form-group col required">
+                        <label for="project-protocol"
+                               class="province-font-medium"
+                        >
+                            Protocolo
+                        </label>
+                        <select id="project-protocol"
+                                name="project-protocol"
+                                class="form-control"
+                        >
+                            {% for protocol in protocols %}
+                                <option value="{{ protocol.id }}">{{ protocol.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-5 required">
+                        <label for="project-responsible"
+                               class="province-font-medium"
+                        >
+                            Responsable
+                        </label>
+                        <select id="project-responsible"
+                                name="project-responsible"
+                                class="form-control"
+                        >
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-2 text-center">
+                        <button type="button"
+                                id="add-protocol-responsible"
+                                class="btn btn-secondary-black"
+                        >
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="protocols-container"></div>
+                <div class="form-row">
+                    <div class="form-group col text-right">
+                        <button type="button"
+                                id="new-project-submit"
+                                class="btn btn-primary-blue province-font-bold">
+                            Guardar
+                        </button>
+                    </div>
+                </div>
             </form>
-
+            {% include "alert_error.html" %}
+            {% url "proyecto" as location %}
+            {% include "success_modal.html" with modal_body_text="Se ha creado con éxito el proyecto" location_on_close=location %}
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "js/create_project.js" %}"></script>
 {% endblock %}
