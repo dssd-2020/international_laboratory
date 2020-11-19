@@ -4,8 +4,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 
-from .forms import ProtocolForm, ProjectForm
-from .models import Activity
+from .forms import ProjectForm
+from .models import Activity, Protocol, ActivityProtocol
 
 
 def createCase():
@@ -88,21 +88,37 @@ class ActivityView(View):
 
 
 class ProtocolView(View):
-    form_class = ProtocolForm
-    initial = {"key": "1"}
     template_name = "create_protocol.html"
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {"form": form})
+        ctx = {
+            "activities": Activity.objects.all()
+        }
+        return render(request, self.template_name, ctx)
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            protocol = form.save()
-            return HttpResponseRedirect("/success/")
-
-        return render(request, self.template_name, {"form": form})
+        error = True
+        if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "order" in request.POST and "local" in request.POST and "points" in request.POST and "activities":
+            try:
+                protocol = Protocol.objects.create(
+                    name=request.POST.get("name"),
+                    start_date=request.POST.get("start_date"),
+                    end_date=request.POST.get("end_date"),
+                    order=request.POST.get("order"),
+                    is_local=request.POST.get("local"),
+                    points=request.POST.get("points"),
+                )
+                for activity in request.POST.getlist("activities[]"):
+                    ActivityProtocol.objects.create(
+                        protocol=protocol,
+                        activity=Activity.objects.get(pk=activity)
+                    )
+                error = False
+            except ():
+                pass
+        return JsonResponse({
+            "error": error
+        })
 
 
 class ProjectView(View):
