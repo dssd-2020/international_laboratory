@@ -22,109 +22,109 @@
 }
 
 .btn-primary-blue {
-    color: white;
-    background-color: var(--secondary-blue);
-    border: 2px solid var(--secondary-blue);
+    color: white !important;
+    background-color: var(--secondary-blue) !important;
+    border: 2px solid var(--secondary-blue) !important;
 }
 
 .btn-primary-blue:hover {
-    color: white;
-    background-color: var(--primary-blue);
-    border: 2px solid var(--primary-blue);
+    color: white !important;
+    background-color: var(--primary-blue) !important;
+    border: 2px solid var(--primary-blue) !important;
 }
 
 .btn-primary-blue:active {
-    color: var(--strong-grey);
-    background-color: var(--tertiary-blue);
-    border: 2px solid var(--tertiary-blue);
+    color: var(--light-grey) !important;
+    background-color: var(--tertiary-blue) !important;
+    border: 2px solid var(--tertiary-blue) !important;
 }
 
 .btn-primary-blue:disabled,
 .btn-primary-blue:disabled:hover,
 .btn-primary-blue .disabled,
 .btn-primary-blue .disabled:hover {
-    color: var(--light-grey);
-    background-color: var(--strong-grey);
-    border: 2px solid var(--strong-grey);
+    color: var(--light-grey) !important;
+    background-color: var(--strong-grey) !important;
+    border: 2px solid var(--strong-grey) !important;
 }
 
 .btn-primary-red {
-    color: white;
-    background-color: var(--secondary-red);
-    border: 2px solid var(--secondary-red);
+    color: white !important;
+    background-color: var(--secondary-red) !important;
+    border: 2px solid var(--secondary-red) !important;
 }
 
 .btn-primary-red:hover {
-    color: white;
-    background-color: var(--primary-red);
-    border: 2px solid var(--primary-red);
+    color: white !important;
+    background-color: var(--primary-red) !important;
+    border: 2px solid var(--primary-red) !important;
 }
 
 .btn-primary-red:active {
-    color: white;
-    background-color: var(--tertiary-red);
-    border: 2px solid var(--tertiary-red);
+    color: white !important;
+    background-color: var(--tertiary-red) !important;
+    border: 2px solid var(--tertiary-red) !important;
 }
 
 .btn-primary-red:disabled,
 .btn-primary-red:disabled:hover,
 .btn-primary-red .disabled,
 .btn-primary-red .disabled:hover {
-    color: var(--light-grey);
-    background-color: darkred;
-    border: 2px solid darkred;
+    color: var(--light-grey) !important;
+    background-color: darkred !important;
+    border: 2px solid darkred !important;
 }
 
 .btn-secondary-white {
-    color: var(--strong-grey);
-    background-color: white;
-    border: 2px solid var(--light-grey);
+    color: var(--strong-grey) !important;
+    background-color: white !important;
+    border: 2px solid var(--light-grey) !important;
 }
 
 .btn-secondary-white:hover {
-    color: var(--strong-grey);
-    background-color: white;
-    border: 2px solid var(--lighter-grey);
+    color: var(--strong-grey) !important;
+    background-color: white !important;
+    border: 2px solid var(--lighter-grey) !important;
 }
 
 .btn-secondary-white:active {
-    color: var(--strong-grey);
-    background-color: var(--lighter-grey);
-    border: 2px solid var(--soft-grey);
+    color: var(--strong-grey) !important;
+    background-color: var(--lighter-grey) !important;
+    border: 2px solid var(--soft-grey) !important;
 }
 
 .btn-secondary-white:disabled,
 .btn-secondary-white:disabled:hover,
 .btn-secondary-white .disabled,
 .btn-secondary-white .disabled:hover {
-    color: var(--strong-grey);
-    background-color: var(--lighter-grey);
-    border: 2px solid var(--light-grey);
+    color: var(--strong-grey) !important;
+    background-color: var(--lighter-grey) !important;
+    border: 2px solid var(--light-grey) !important;
 }
 
 .btn-secondary-black {
-    color: white;
-    background-color: black;
-    border: 2px solid black;
+    color: white !important;
+    background-color: black !important;
+    border: 2px solid black !important;
 }
 
 .btn-secondary-black:hover {
-    color: white;
-    background-color: var(--stronger-grey);
-    border: 2px solid var(--stronger-grey);
+    color: white !important;
+    background-color: var(--stronger-grey) !important;
+    border: 2px solid var(--stronger-grey) !important;
 }
 
 .btn-secondary-black:active {
-    color: white;
-    background-color: var(--hard-grey);
-    border: 2px solid var(--hard-grey);
+    color: white !important;
+    background-color: var(--hard-grey) !important;
+    border: 2px solid var(--hard-grey) !important;
 }
 
 .btn-secondary-black:disabled,
 .btn-secondary-black:disabled:hover,
 .btn-secondary-black .disabled,
 .btn-secondary-black .disabled:hover {
-    color: white;
-    background-color: var(--hard-grey);
-    border: 2px solid var(--hard-grey);
+    color: white !important;
+    background-color: var(--hard-grey) !important;
+    border: 2px solid var(--hard-grey) !important;
 }
