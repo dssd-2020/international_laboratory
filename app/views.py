@@ -7,24 +7,43 @@ import json
 from .forms import ActivityForm, ProtocolForm, ProjectForm
 
 
-def getProcessId(request):
+def createCase():
+    loginFromBonita()
     headers = {
-            "Cookie": loginFromBonita(request),
-            "Content-Type": "application/json"
+            'X-Bonita-API-Token': requests.COOKIES['X-Bonita-API-Token'],
+            'JSESSIONID': requests.COOKIES['JSESSIONID'],
+            'csrftoken': requests.COOKIES['csrftoken'],
+            'Content-Type': 'application/json'
             }
-    response = requests.get('http://localhost:8080/bonita/API/identity/user?p=0&c=10&o=lastname%20ASC&f=enabled%3dtrue', headers=headers)
+
+    response = requests.post('http://localhost:8080/bonita/API/bpm/case?f=processDefinitionId=40004', headers=headers)
     # response = requests.get(
     #     'http://localhost:8080/bonita/API/bpm/process?f=name=AprobacionDeMedicamentos&p=0&c=10')
         # , headers=headers)
+    print('case', response)
+    return response
+
+
+def getProcessId(request):
+    request = loginFromBonita(request)
+    url = 'http://localhost:8080/bonita/API/bpm/process?c=100&p=0'
+    # url = 'http://localhost:8080/cookies'
+    headers = {
+            'X-Bonita-API-Token': request.COOKIES['X-Bonita-API-Token'],
+            # 'Content-Type': 'application/json',
+            'Cookie': request.COOKIES['JSESSIONID'],
+            # 'cache-control': 'no-cache',
+            }
+    # response = requests.post(url, headers=headers)
+    response = requests.get(url, cookies=request.COOKIES)
     print(response)
     return response
 
 
-def getUsersFromBonita(request):
-    headers = {'X-Bonita-API-Token': loginFromBonita(request)}
+def getUsersFromBonita():
+    headers = {'X-Bonita-API-Token': loginFromBonita()}
     response = requests.get(
-        'http://localhost:8080/bonita/API/identity/user?p=0&c10')
-        # 'http://localhost:8080/bonita/API/identity/group/Grupo1')
+        'http://localhost:8080/bonita/API/identity/group/Grupo1')
     # print(request.session['taskId'])
     return response
 
@@ -33,12 +52,17 @@ def loginFromBonita(request):
     url = 'http://localhost:8080/bonita/loginservice'
     data = {'username': 'walter.bates',
             'password': 'bpm',
-            'redirect': 'false'}
+            'redirect': 'false',
+            'redirectURL': ''}
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-    requests.post(url, data=data, headers=headers)
+    response = requests.post(url, data=data, headers=headers)
 
-    return request.COOKIES['JSESSIONID']
+    if response.status_code == 200:
+        request.session['X-Bonita-API-Token'] = request.COOKIES['X-Bonita-API-Token']
+        request.session['JSESSIONID'] = request.COOKIES['JSESSIONID']
+        # requests.session['csrftoken'] = request.COOKIES['csrftoken']
 
+    return request
 
 class ActivityView(View):
     form_class = ActivityForm
