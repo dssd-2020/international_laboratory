@@ -1,4 +1,5 @@
-const showErrorAlert = () => {
+const showErrorAlert = (error) => {
+    $("#alert-error > #error").text(error);
     $("#alert-error").addClass("show");
 }
 
