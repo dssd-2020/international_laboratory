@@ -220,11 +220,28 @@ class FailureResolutionView(View):
     template_name = "failure_resolution.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
+        protocol_id = 6
+        ctx = {
+            "protocol_id": protocol_id,
+        }
+        return render(request, self.template_name, ctx)
 
     def post(self, request, *args, **kwargs):
         error = True
-        print(request.POST)
+
+        if "protocol" in request.POST and "resolution" in request.POST:
+            # (Alejo): Se simula un switch-case. Si el "resolution" recibido no coincide con ninguno, el default es "error"
+            resolution = {
+                1: "continue",
+                2: "restart_protocol",
+                3: "restart_project",
+                4: "cancel_project"
+            }.get(int(request.POST.get("resolution")), "error")
+
+            # (Alejo): Acá quedará por hacer el procesamiento y la interacción con Bonita según lo que hayan seleccionado
+            error = False
+
         return JsonResponse({
             "error": error
         })
