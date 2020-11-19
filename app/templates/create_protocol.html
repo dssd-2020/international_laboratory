@@ -1,9 +1,145 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    - Crear protocolo
+{% endblock %}
 
 {% block content %}
-    <h2>Crear nuevo protocolo</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Guardar</button>
-    </form>
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Crear nuevo protocolo</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="new-protocol-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="protocol-name"
+                               class="province-font-medium"
+                        >
+                            Nombre del protocolo
+                        </label>
+                        <input type="text"
+                               id="protocol-name"
+                               name="protocol-name"
+                               class="form-control"
+                               placeholder="Completar"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="protocol-start-date"
+                               class="province-font-medium"
+                        >
+                            Fecha de inicio
+                        </label>
+                        <input type="date"
+                               id="protocol-start-date"
+                               name="protocol-start-date"
+                               class="form-control"
+                        >
+                    </div>
+                    <div class="form-group col required">
+                        <label for="protocol-end-date"
+                               class="province-font-medium"
+                        >
+                            Fecha de finalización
+                        </label>
+                        <input type="date"
+                               id="protocol-end-date"
+                               name="protocol-end-date"
+                               class="form-control"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="protocol-order"
+                               class="province-font-medium"
+                        >
+                            Orden de ejecución
+                        </label>
+                        <input type="number"
+                               id="protocol-order"
+                               name="protocol-order"
+                               class="form-control"
+                               placeholder="Completar"
+                        >
+                    </div>
+                    <div class="form-group col required">
+                        <label for="protocol-local"
+                               class="province-font-medium"
+                        >
+                            Tipo de ejecución
+                        </label>
+                        <select id="protocol-local"
+                                name="protocol-local"
+                                class="form-control"
+                        >
+                            <option value="" selected disabled>Seleccionar</option>
+                            <option value="1">Local</option>
+                            <option value="0">Remoto</option>
+                        </select>
+                    </div>
+                    <div class="form-group col required">
+                        <label for="protocol-points"
+                               class="province-font-medium"
+                        >
+                            Puntaje necesario
+                        </label>
+                        <input type="number"
+                               id="protocol-points"
+                               name="protocol-points"
+                               class="form-control"
+                               placeholder="Completar"
+                        >
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col required">
+                        <label for="protocol-activities"
+                               class="province-font-medium"
+                        >
+                            Actividades
+                        </label>
+                        <select id="protocol-activities"
+                                name="protocol-activities"
+                                class="form-control"
+                                multiple
+                                size="10"
+                                aria-describedby="protocol-activities-help"
+                        >
+                            {% for activity in activities %}
+                                <option value="{{ activity.id }}">{{ activity.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small id="protocol-activities-help"
+                               class="form-text text-muted"
+                        >
+                            Mantener presionado Ctrl para selección múltiple
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col text-right">
+                        <button type="button"
+                                id="new-protocol-submit"
+                                class="btn btn-primary-blue province-font-bold">Guardar
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% include "alert_error.html" %}
+            {% url "protocolo" as location %}
+            {% include "success_modal.html" with modal_body_text="Se ha creado con éxito el protocolo" location_on_close=location %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "js/create_protocol.js" %}"></script>
 {% endblock %}
