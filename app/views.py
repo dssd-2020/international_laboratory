@@ -178,3 +178,31 @@ class ProjectView(View):
         return JsonResponse({
             "error": error
         })
+
+
+class LocalExecutionView(View):
+    template_name = "local_execution.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        error = True
+        print(request.POST)
+        return JsonResponse({
+            "error": error
+        })
+
+
+class FailureResolutionView(View):
+    template_name = "failure_resolution.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        error = True
+        print(request.POST)
+        return JsonResponse({
+            "error": error
+        })

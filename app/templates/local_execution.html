@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    - Ejecución de protocolo local
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Ejecución de protocolo local</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="new-activity-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col text-right">
+                        <button type="button"
+                                id="new-activity-submit"
+                                class="btn btn-primary-blue province-font-bold">
+                            Guardar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
