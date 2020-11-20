@@ -1,0 +1,14 @@
+/* Linea separadora */
+
+.underlined-bottom,
+.underlined-top {
+    border-radius: .25rem;
+}
+
+.underlined-bottom {
+    border-bottom: 2px solid var(--lighter-grey);
+}
+
+.underlined-top {
+    border-top: 2px solid var(--lighter-grey);
+}

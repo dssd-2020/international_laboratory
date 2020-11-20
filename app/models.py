@@ -3,7 +3,6 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 
-# Create your models here.
 class Activity(models.Model):
     name = models.CharField(_("Nombre"), max_length=150)
 
@@ -24,7 +23,7 @@ class Protocol(models.Model):
     end_date = models.DateTimeField(_("Fecha de fin"))
     order = models.IntegerField(_("Orden de ejecución"), null=False)
     is_local = models.BooleanField(_("Es local"), default=True)
-    points = models.IntegerField(_("Puntaje necesario"), default=0)
+    points = models.FloatField(_("Puntaje necesario"), default=0)
     activities = models.ManyToManyField(Activity, through='ActivityProtocol', verbose_name="Actividades")
 
     class Meta:

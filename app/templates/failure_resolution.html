@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    - Resolución ante falla
+{% endblock %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h2 class="province-font-black">Resolución ante falla</h2>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col text-center">
+            <h4 class="province-font-bold">¿Qué se debe hacer?</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <form id="failure-resolution-form">
+                {% csrf_token %}
+                <input type="hidden"
+                       id="protocol"
+                       name="protocol"
+                       value="{{ protocol_id }}"
+                >
+                <div class="form-row">
+                    <div class="form-group col">
+                        <div class="list-group">
+                            <button type="button"
+                                    id="resolution-item-1"
+                                    class="my-2 list-group-item list-group-item-action btn-secondary-white"
+                                    onclick="updateResolution(1)"
+                            >
+                                Continuar procesamiento
+                                <i id="resolution-icon-1"
+                                   class="far fa-circle"
+                                   style="float: right; font-size: 1.5rem;"
+                                ></i>
+                            </button>
+                            <button type="button"
+                                    id="resolution-item-2"
+                                    class="my-2 list-group-item list-group-item-action btn-secondary-white"
+                                    onclick="updateResolution(2)"
+                            >
+                                Repetir protocolo
+                                <i id="resolution-icon-2"
+                                   class="far fa-circle"
+                                   style="float: right; font-size: 1.5rem;"
+                                ></i>
+                            </button>
+                            <button type="button"
+                                    id="resolution-item-3"
+                                    class="my-2 list-group-item list-group-item-action btn-secondary-white"
+                                    onclick="updateResolution(3)"
+                            >
+                                Reiniciar procesamiento
+                                <i id="resolution-icon-3"
+                                   class="far fa-circle"
+                                   style="float: right; font-size: 1.5rem;"
+                                ></i>
+                            </button>
+                            <button type="button"
+                                    id="resolution-item-4"
+                                    class="my-2 list-group-item list-group-item-action btn-secondary-white"
+                                    onclick="updateResolution(4)"
+                            >
+                                Cancelar procesamiento
+                                <i id="resolution-icon-4"
+                                   class="far fa-circle"
+                                   style="float: right; font-size: 1.5rem;"
+                                ></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col text-right">
+                        <button type="button"
+                                id="failure-resolution-submit"
+                                class="btn btn-primary-blue province-font-bold">
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {% include "alert_error.html" %}
+            {% url "index" as location %}
+            {% include "success_modal.html" with modal_body_text="Se ha guardado la resolución ante falla" location_on_close=location %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "js/failure_resolution.js" %}"></script>
+{% endblock %}

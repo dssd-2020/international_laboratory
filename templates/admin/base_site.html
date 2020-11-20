@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}
+    Administración Laboratorio Internacional
+{% endblock %}
+
+{% block extrahead %}
+    <link href="{% static "img/international-laboratory-logo.png" %}"
+          rel="icon"
+          sizes="48x48"
+    >
+{% endblock %}
+
+{% block index_title %}
+    No
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name"><a href="{% url "admin:index" %}"> Laboratorio Internacional </a></h1>
+{% endblock %}
