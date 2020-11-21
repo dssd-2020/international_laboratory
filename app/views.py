@@ -69,27 +69,29 @@ class ProjectView(View):
         # (Alejo): Espero no haber roto nada :$
         # (Yani): La proxima vez que toques mi codigo no respondo de mi.
         # (Yani): Yo te toqué tu código porque me la banco
-        user_logged = BonitaManager().get_user_logged(request)
-        users = BonitaManager().get_users(request)
+        bonita_manager = BonitaManager(request=request)
+        user_logged = bonita_manager.get_user_logged(request)
+        users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
         ctx = {
             "project_manager": {
                 "id": user_logged['user_id'],
                 "name": user_logged['user_name']
             },
-            "users": [
-                {
-                    "id": "alejo",
-                    "name": "Alejo"
-                },
-                {
-                    "id": "marianela",
-                    "name": "Marianela"
-                },
-                {
-                    "id": "yanina",
-                    "name": "Yanina"
-                },
-            ],
+            "users": users_protocol_responsible,
+            #     [
+            #     {
+            #         "id": "alejo",
+            #         "name": "Alejo"
+            #     },
+            #     {
+            #         "id": "marianela",
+            #         "name": "Marianela"
+            #     },
+            #     {
+            #         "id": "yanina",
+            #         "name": "Yanina"
+            #     },
+            # ],
             "protocols": Protocol.objects.all(),
         }
 
