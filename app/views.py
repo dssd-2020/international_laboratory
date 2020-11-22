@@ -4,6 +4,32 @@ from django.views import View
 
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def get_protocols_by_project(request):
+    """
+    :param request: user, protocol, project
+    :return: message, state
+    """
+    data = request.data
+    print(data)
+    try:
+        protocols = ProtocolProject.objects.filter(project=data['project'], project__active=True)
+        if len(protocols) > 0:
+            protocols_list = [protocol.id for protocol in protocols]
+            return JsonResponse(
+                {'data': {'protocols': protocols_list}, 'status': status.HTTP_200_OK})
+        else:
+            return JsonResponse({'error': 'El proyecto no está activo', 'status': status.HTTP_400_BAD_REQUEST})
+    except ProtocolProject.DoesNotExist:
+        return JsonResponse({'error': 'El proyecto no existe o no está activo', 'status': status.HTTP_400_BAD_REQUEST})
+    except Exception as e:
+        return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
 
 
 class HomeView(View):
@@ -144,6 +170,7 @@ class ProjectView(View):
                     bonita_manager = BonitaManager(request)
                     bonita_manager.set_active_project(request, project)
                     running_activity = bonita_manager.get_activities_by_case(request)
+                    bonita_manager.update_activity_assignment(request, running_activity)
                     bonita_manager.update_activity_state(request, running_activity, "completed", project)
                 error = False
             except ():

@@ -4,8 +4,8 @@ import requests
 
 
 class BonitaManager:
-    process_id = ''
-    case_id = ''
+    process_id = None
+    case_id = None
     cookies = None
     uri = 'http://localhost:8080/bonita'
 
@@ -133,15 +133,15 @@ class BonitaManager:
         }
 
         response = requests.put(url, data=json.dumps(data), headers=headers, cookies=request.COOKIES)
-        print(response)
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.content))
 
     def set_active_project(self, request, project):
+        # Esto es para ver todas las variables que tiene el caso, con el tipo de cada una
         # url = ''.join([self.uri, '/API/bpm/caseVariable?p=0&c=100&f=case_id%3d', self.get_case(request)])
         # response = requests.get(url, cookies=request.COOKIES)
 
-        url = ''.join([self.uri, '/API/bpm/caseVariable/', self.get_case(request), "/active_project"])
+        url = ''.join([self.uri, '/API/bpm/caseVariable/', self.get_case(request), "/var_active_project"])
         headers = {
             "X-Bonita-API-Token": request.COOKIES['X-Bonita-API-Token'],
             "Content-type": "application/json"
