@@ -13,9 +13,8 @@ class BonitaManager:
         if request is None:
             request = {}
         else:
-            pass
-            # self.process_id = self.get_process_id(request)
-            # self.case_id = self.get_case(request)
+            self.process_id = self.get_process_id(request)
+            self.case_id = self.get_case(request)
 
     def login(self, request, username, password):
         url = "".join([self.uri, "/loginservice"])
