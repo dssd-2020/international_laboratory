@@ -65,33 +65,17 @@ class ProjectView(View):
     template_name = "create_project.html"
 
     def get(self, request, *args, **kwargs):
-        # (Alejo): Comenté la linea de abajo porque me rompe la conexión con Bonita ya que no me anda Bonita :'(
-        # (Alejo): Espero no haber roto nada :$
-        # (Yani): La proxima vez que toques mi codigo no respondo de mi.
-        # (Yani): Yo te toqué tu código porque me la banco
         bonita_manager = BonitaManager(request=request)
+        running_activity = bonita_manager.get_activities_by_case(request)
         user_logged = bonita_manager.get_user_logged(request)
         users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
         ctx = {
+            "running_activity": running_activity,
             "project_manager": {
                 "id": user_logged['user_id'],
                 "name": user_logged['user_name']
             },
             "users": users_protocol_responsible,
-            #     [
-            #     {
-            #         "id": "alejo",
-            #         "name": "Alejo"
-            #     },
-            #     {
-            #         "id": "marianela",
-            #         "name": "Marianela"
-            #     },
-            #     {
-            #         "id": "yanina",
-            #         "name": "Yanina"
-            #     },
-            # ],
             "protocols": Protocol.objects.all(),
         }
 
@@ -118,6 +102,10 @@ class ProjectView(View):
                             project=project,
                             responsible=responsible
                         )
+                    bonita_manager = BonitaManager(request)
+                    bonita_manager.set_active_project(request, project)
+                    running_activity = bonita_manager.get_activities_by_case(request)
+                    bonita_manager.update_activity_state(request, running_activity, "completed", project)
                 error = False
             except ():
                 pass
