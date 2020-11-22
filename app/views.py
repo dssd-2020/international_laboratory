@@ -4,6 +4,36 @@ from django.shortcuts import render
 from django.views import View
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def get_protocols_by_project(request):
+    """
+    :param request: user, protocol, project
+    :return: message, state
+    """
+    data = request.data
+    protocols = ProtocolProject.objects.get(project=data['project'])
+    print(type(protocols))
+    try:
+        protocols = list(ProtocolProject.objects.filter(project=data['project']).values())
+        if len(protocols) > 0:
+            print(protocols)
+            protocols_list = [protocol.id for protocol in protocols]
+            print(protocols_list)
+            # return JsonResponse(
+            #     {'data': {'protocols': protocols_list}, 'status': status.HTTP_200_OK})
+        else:
+            return JsonResponse({'data': {'protocols': []}, 'status': status.HTTP_200_OK})
+    except ProtocolProject.DoesNotExist:
+        return JsonResponse({'error': 'El proyecto no existe o no está activo', 'status': status.HTTP_400_BAD_REQUEST})
+    except Exception as e:
+        return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
+
 
 
 class ActivityView(View):
