@@ -66,6 +66,10 @@ class ProjectView(View):
 
     def get(self, request, *args, **kwargs):
         bonita_manager = BonitaManager(request=request)
+        # bonita_manager.login(request)
+        # print("userlogged", bonita_manager.get_user_logged(request))
+        # bonita_manager.create_case(request)
+        # return pepe
         running_activity = bonita_manager.get_activities_by_case(request)
         user_logged = bonita_manager.get_user_logged(request)
         users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)

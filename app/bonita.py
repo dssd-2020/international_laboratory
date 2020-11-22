@@ -5,6 +5,7 @@ import json
 class BonitaManager:
     process_id = ''
     case_id = ''
+    cookies = None
     uri = 'http://localhost:8080/bonita'
 
     def __init__(self, request=None):
@@ -16,24 +17,23 @@ class BonitaManager:
 
     def login(self, request):
         url = ''.join([self.uri, '/loginservice'])
-        data = {'username': 'alejo.marin',
+        data = {'username': 'yanina.echevarria',
                 'password': 'bpm',
                 'redirect': 'false',
                 'redirectURL': ''}
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-        response = requests.post(url, json=data, headers=headers)
+        response = requests.post(url, data=data, headers=headers)
+        self.cookies = response.cookies
         return response
 
     def create_case(self, request):
         url = ''.join([self.uri, '/API/bpm/process/', self.get_process_id(request), '/instantiation'])
         headers = {
-            "X-Bonita-API-Token": request.COOKIES['X-Bonita-API-Token'],
-            "JSESSIONID": request.COOKIES['JSESSIONID'],
-            "csrftoken": request.COOKIES['csrftoken'],
+            "X-Bonita-API-Token": self.cookies['X-Bonita-API-Token'],
             "Content-Type": "application/json",
             "cache-control": "no-cache"
         }
-        response = requests.post(url, headers=headers, cookies=request.COOKIES)
+        response = requests.post(url, headers=headers, cookies=self.cookies)
         self.case_id = json.loads(response.content)[0]['id']
         return self.case_id
 
