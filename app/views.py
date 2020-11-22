@@ -1,9 +1,44 @@
-import requests
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
+
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
+
+
+class HomeView(View):
+    template_name = "home.html"
+
+    def get(self, request, *args, **kwargs):
+        if "logout" in request.GET:
+            bonita_manager = BonitaManager(request=request)
+            return JsonResponse({
+                "error": bonita_manager.logout(request)
+            })
+
+        try:
+            if request.session["user_logged"]:
+                pass
+            else:
+                self.template_name = "login.html"
+        except KeyError:
+            self.template_name = "login.html"
+
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        error = True
+        if "username" in request.POST and "password" in request.POST:
+            bonita_manager = BonitaManager(request=request)
+            login = bonita_manager.login(request, request.POST.get("username"), request.POST.get("password"))
+            if login:
+                # print(request.session["bonita_cookies"])
+                # print("userlogged", bonita_manager.get_user_logged(request))
+                error = False
+            pass
+        return JsonResponse({
+            "error": error
+        })
 
 
 class ActivityView(View):

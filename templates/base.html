@@ -45,20 +45,69 @@
 </head>
 
 <body>
-<div class="container my-5">
-    <div class="row align-items-start">
-        <div class="col text-center">
-            <figure class="figure">
+<div class="container my-5 {% if request.session.user_logged %}pt-5{% endif %}">
+    {% if request.session.user_logged %}
+        <nav class="navbar navbar-expand-lg navbar-expand-md navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand" href="{% url "home" %}">
                 <img src="{% static "img/international-laboratory-logo.png" %}"
-                     class="figure-img img-fluid rounded w-25"
+                     width="40"
+                     height="40"
+                     class="d-inline-block align-top"
                      alt="Logo del Laboratorio Internacional"
                 >
-                <figcaption class="province-font-black figure-caption text-center">
-                    Laboratorio Internacional
-                </figcaption>
-            </figure>
+            </a>
+            <button class="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbarNav"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse"
+                 id="navbarNav"
+            >
+                <ul class="navbar-nav mr-auto">
+                    {% comment %}
+                    <li class="nav-item active">
+                        <a class="nav-link"
+                           href="#"
+                        >
+                            Home <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    {% endcomment %}
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="navbar-text province-font-medium">
+                            {{ request.session.user_logged.user_name }}
+                        </span>
+                    </li>
+                    <li class="nav-item"
+                        id="logout-submit"
+                    >
+                        <span class="navbar-text text-white btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    {% else %}
+        <div class="row align-items-start">
+            <div class="col text-center">
+                <figure class="figure">
+                    <img src="{% static "img/international-laboratory-logo.png" %}"
+                         class="figure-img img-fluid rounded w-25"
+                         alt="Logo del Laboratorio Internacional"
+                    >
+                    <figcaption class="province-font-black figure-caption text-center">
+                        Laboratorio Internacional
+                    </figcaption>
+                </figure>
+            </div>
         </div>
-    </div>
+    {% endif %}
     {% block content %}
     {% endblock %}
 </div>
@@ -91,7 +140,7 @@
 <!-- Fontawesome files end -->
 
 <!-- JS files begin -->
-<!-- <script src="{% static "" %}"></script> -->
+<script src="{% static "js/logout.js" %}"></script>
 <!-- JS files end -->
 
 {% block scripts %}

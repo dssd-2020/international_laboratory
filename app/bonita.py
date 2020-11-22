@@ -1,5 +1,6 @@
-import requests
 import json
+
+import requests
 
 
 class BonitaManager:
@@ -12,19 +13,41 @@ class BonitaManager:
         if request is None:
             request = {}
         else:
-            self.process_id = self.get_process_id(request)
-            self.case_id = self.get_case(request)
+            pass
+            # self.process_id = self.get_process_id(request)
+            # self.case_id = self.get_case(request)
 
-    def login(self, request):
-        url = ''.join([self.uri, '/loginservice'])
-        data = {'username': 'yanina.echevarria',
-                'password': 'bpm',
-                'redirect': 'false',
-                'redirectURL': ''}
-        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    def login(self, request, username, password):
+        url = "".join([self.uri, "/loginservice"])
+        data = {
+            "username": username,
+            "password": password,
+            "redirect": "false"
+        }
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
         response = requests.post(url, data=data, headers=headers)
-        self.cookies = response.cookies
+        if len(response.cookies):
+            request.session["bonita_cookies"] = {
+                "BOS_Locale": response.cookies["BOS_Locale"],
+                "JSESSIONID": response.cookies["JSESSIONID"],
+                "X-Bonita-API-Token": response.cookies["X-Bonita-API-Token"],
+                "bonita.tenant": response.cookies["bonita.tenant"],
+            }
+            request.session["user_logged"] = self.get_user_logged(request)
+        else:
+            return False
         return response
+
+    def logout(self, request):
+        if "user_logged" in request.session:
+            url = "".join([self.uri, "/logoutservice"])
+            data = {"redirect": "false"}
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            requests.get(url, data=data, headers=headers)
+            del request.session["user_logged"]
+            del request.session["bonita_cookies"]
+            return True
+        return False
 
     def create_case(self, request):
         url = ''.join([self.uri, '/API/bpm/process/', self.get_process_id(request), '/instantiation'])
@@ -62,7 +85,7 @@ class BonitaManager:
 
     def get_user_logged(self, request):
         url = 'http://localhost:8080/bonita/API/system/session/unusedid'
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         return json.loads(response.content)
 
     def get_human_task_by_name(self, request, name):
