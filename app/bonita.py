@@ -11,8 +11,7 @@ class BonitaManager:
     def __init__(self, request=None):
         if request is None:
             request = {}
-        else:
-            self.login(request, "yanina.echevarria", "bpm")
+        elif 'user_logged' in request.session:
             self.process_id = self.get_process_id(request)
             self.case_id = self.get_case(request)
 
@@ -132,12 +131,14 @@ class BonitaManager:
 
     def check_activity_assignment(self, request, activity):
         url = ''.join([self.uri, '/API/bpm/activity/', activity])
-
+        print(activity)
+        print(url)
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
 
         print(json.loads(response.content))
+        print(json.loads(response.content)['assigned_id'])
         return json.loads(response.content)['assigned_id']
 
     def update_activity_assignment(self, request, activity):
