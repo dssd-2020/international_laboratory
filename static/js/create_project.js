@@ -1,18 +1,26 @@
+let protocol_select = $("select[name=project-protocol]");
+let responsible_select = $("select[name=project-responsible]");
 let project_submit_button = $("#new-project-submit");
 let protocol_add_button = $("#add-protocol-responsible");
 let protocols = [];
 
 protocol_add_button.click(
     () => {
-        let protocol = $("select[name=project-protocol]").val();
+        let protocol = protocol_select.val();
         let protocol_name = $("select[name=project-protocol] option:selected").text();
-        let responsible = $("select[name=project-responsible]").val();
+        let responsible = responsible_select.val();
         let responsible_name = $("select[name=project-responsible] option:selected").text();
 
-        protocols.push([protocol, responsible]);
-        let index = protocols.length - 1
+        if (protocol && responsible) {
+            protocols.push([protocol, responsible]);
+            let index = protocols.length - 1
 
-        $("#protocols-container").append(protocolResponsibleTemplate(index, protocol_name, responsible_name));
+            protocol_select.val("");
+            $(`select[name=project-protocol] option[value=${protocol}]`).wrap("<span/>");
+            responsible_select.val("");
+
+            $("#protocols-container").append(protocolResponsibleTemplate(index, protocol_name, responsible_name));
+        }
     }
 );
 
@@ -65,7 +73,7 @@ const protocolResponsibleTemplate = (index, protocol_name, responsible_name) => 
 };
 
 const removeProtocolResponsible = (index) => {
-    $("#protocol-responsible-"+index).remove();
+    $("#protocol-responsible-" + index).remove();
     protocols[index] = ["-1", "-1"];
 };
 

@@ -108,7 +108,9 @@ class ProjectView(View):
         if session_complete(request):
             bonita_manager = BonitaManager(request=request)
             running_activity = bonita_manager.get_activities_by_case(request)
+            print(running_activity)
             user_logged = bonita_manager.get_user_logged(request)
+            print(user_logged)
             users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
             ctx = {
                 "running_activity": running_activity,
