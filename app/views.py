@@ -4,43 +4,6 @@ from django.views import View
 
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def get_protocols_by_project(request):
-    """
-    :param request: user, protocol, project
-    :return: message, state
-    """
-    data = request.data
-    print(data)
-    try:
-        protocols = ProtocolProject.objects.filter(project=data['project'], project__active=True)
-        if len(protocols) > 0:
-            protocols_list = [protocol.id for protocol in protocols]
-            return JsonResponse(
-                {'data': {'protocols': protocols_list}, 'status': status.HTTP_200_OK})
-        else:
-            return JsonResponse({'error': 'El proyecto no está activo', 'status': status.HTTP_400_BAD_REQUEST})
-    except ProtocolProject.DoesNotExist:
-        return JsonResponse({'error': 'El proyecto no existe o no está activo', 'status': status.HTTP_400_BAD_REQUEST})
-    except Exception as e:
-        return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
-
-
-def get_result_by_protocol(protocol, activities_checked):
-    # activities_checked = 0
-    total = protocol.activities.count()
-    # for activity in protocol.activityprotocol_set.all():
-    #     print(activity.approved)
-    #     activities_checked += 1 if activity.approved else 0
-
-    points = activities_checked * 100 / total
-    return protocol.points <= points
 
 
 class HomeView(View):
@@ -69,8 +32,6 @@ class HomeView(View):
             bonita_manager = BonitaManager(request=request)
             login = bonita_manager.login(request, request.POST.get("username"), request.POST.get("password"))
             if login:
-                # print(request.session["bonita_cookies"])
-                # print("userlogged", bonita_manager.get_user_logged(request))
                 error = False
             pass
         return JsonResponse({
@@ -138,18 +99,14 @@ class ProjectView(View):
 
     def get(self, request, *args, **kwargs):
         bonita_manager = BonitaManager(request=request)
-        # bonita_manager.login(request)
-        # print("userlogged", bonita_manager.get_user_logged(request))
-        # bonita_manager.create_case(request)
-        # return pepe
         running_activity = bonita_manager.get_activities_by_case(request)
         user_logged = bonita_manager.get_user_logged(request)
         users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
         ctx = {
             "running_activity": running_activity,
             "project_manager": {
-                "id": user_logged['user_id'],
-                "name": user_logged['user_name']
+                "id": user_logged["user_id"],
+                "name": user_logged["user_name"]
             },
             "users": users_protocol_responsible,
             "protocols": Protocol.objects.all(),
@@ -181,7 +138,7 @@ class ProjectView(View):
                     bonita_manager = BonitaManager(request)
                     bonita_manager.set_active_project(request, project)
                     running_activity = request.POST.get("running_activity")
-                    # if bonita_manager.check_activity_assignment(request, running_activity) == '':
+                    # if bonita_manager.check_activity_assignment(request, running_activity) == "":
                     #     bonita_manager.update_activity_assignment(request, running_activity)
                     bonita_manager.update_activity_state(request, running_activity, "completed", project)
                 error = False
@@ -225,7 +182,7 @@ class LocalExecutionView(View):
                 error = False
                 bonita_manager = BonitaManager(request)
                 running_activity = bonita_manager.get_activities_by_case(request)
-                if bonita_manager.check_activity_assignment(request, running_activity) == '':
+                if bonita_manager.check_activity_assignment(request, running_activity) == "":
                     bonita_manager.update_activity_assignment(request, running_activity)
                 bonita_manager.update_activity_state(request, running_activity, "completed")
                 bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
