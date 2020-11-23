@@ -32,6 +32,17 @@ def get_protocols_by_project(request):
         return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
 
 
+def get_result_by_protocol(protocol, activities_checked):
+    # activities_checked = 0
+    total = protocol.activities.count()
+    # for activity in protocol.activityprotocol_set.all():
+    #     print(activity.approved)
+    #     activities_checked += 1 if activity.approved else 0
+
+    points = activities_checked * 100 / total
+    return protocol.points <= points
+
+
 class HomeView(View):
     template_name = "home.html"
 
@@ -170,7 +181,8 @@ class ProjectView(View):
                     bonita_manager = BonitaManager(request)
                     bonita_manager.set_active_project(request, project)
                     running_activity = bonita_manager.get_activities_by_case(request)
-                    bonita_manager.update_activity_assignment(request, running_activity)
+                    if bonita_manager.check_activity_assignment(request, running_activity) == '':
+                        bonita_manager.update_activity_assignment(request, running_activity)
                     bonita_manager.update_activity_state(request, running_activity, "completed", project)
                 error = False
             except ():
@@ -185,7 +197,7 @@ class LocalExecutionView(View):
 
     def get(self, request, *args, **kwargs):
         # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
-        protocol_id = 6
+        protocol_id = 4
         protocol = Protocol.objects.get(pk=protocol_id)
         activities = protocol.activities.all()
         ctx = {
@@ -200,15 +212,23 @@ class LocalExecutionView(View):
             protocol = Protocol.objects.get(pk=request.POST.get("protocol"))
             activities = protocol.activities.all()
             try:
+                activities_checked = 0
                 for activity in activities:
                     if "activities[{}]".format(activity.id) in request.POST:
                         activity_protocol = ActivityProtocol.objects.get(
                             protocol=protocol,
                             activity=activity
                         )
+                        activities_checked += 1
                         activity_protocol.approved = request.POST.get("activities[{}]".format(activity.id))
                         activity_protocol.save()
                 error = False
+                bonita_manager = BonitaManager(request)
+                running_activity = bonita_manager.get_activities_by_case(request)
+                if bonita_manager.check_activity_assignment(request, running_activity) == '':
+                    bonita_manager.update_activity_assignment(request, running_activity)
+                bonita_manager.update_activity_state(request, running_activity, "completed")
+                bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
             except ():
                 pass
         return JsonResponse({
