@@ -1,6 +1,9 @@
 import json
-
 import requests
+import logging
+
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
 class BonitaManager:
@@ -33,6 +36,7 @@ class BonitaManager:
                 "bonita.tenant": response.cookies["bonita.tenant"],
             }
             request.session["user_logged"] = self.get_user_logged(request)
+            logging.info('El usuario %s ha iniciado sesión', request.session["user_logged"]['user_name'])
         else:
             return False
         return response
