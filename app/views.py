@@ -180,7 +180,7 @@ class ProjectView(View):
                         )
                     bonita_manager = BonitaManager(request)
                     bonita_manager.set_active_project(request, project)
-                    running_activity = bonita_manager.get_activities_by_case(request)
+                    running_activity = request.POST.get("running_activity")
                     if bonita_manager.check_activity_assignment(request, running_activity) == '':
                         bonita_manager.update_activity_assignment(request, running_activity)
                     bonita_manager.update_activity_state(request, running_activity, "completed", project)

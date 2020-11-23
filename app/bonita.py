@@ -12,6 +12,7 @@ class BonitaManager:
         if request is None:
             request = {}
         else:
+            self.login(request, "yanina.echevarria", "bpm")
             self.process_id = self.get_process_id(request)
             self.case_id = self.get_case(request)
 
@@ -50,26 +51,30 @@ class BonitaManager:
     def create_case(self, request):
         url = ''.join([self.uri, '/API/bpm/process/', self.get_process_id(request), '/instantiation'])
         headers = {
-            "X-Bonita-API-Token": self.cookies['X-Bonita-API-Token'],
+            "X-Bonita-API-Token": request.session["bonita_cookies"]['X-Bonita-API-Token'],
             "Content-Type": "application/json",
             "cache-control": "no-cache"
         }
-        response = requests.post(url, headers=headers, cookies=self.cookies)
+        response = requests.post(url, headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
+        print(response)
         self.case_id = json.loads(response.content)[0]['id']
         return self.case_id
 
     def get_case(self, request):
         url = ''.join([self.uri, '/API/bpm/case?p=0&c=100&f=processDefinitionId=', self.process_id])
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
-        return json.loads(response.content)[0]['id']
+        elif json.loads(response.content):
+            return json.loads(response.content)[0]['id']
+        else:
+            return self.create_case(request)
 
     def get_process_id(self, request):
         url = ''.join([self.uri, '/API/bpm/process?c=100&p=0&f=name=Aprobacion de medicamentos'])
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
         response = json.loads(response.content)
@@ -79,14 +84,14 @@ class BonitaManager:
     def get_users_protocol_responsible(self, request):
         group_id = self.get_group_by_name(request, "Responsable de protocolo")
         url = ''.join([self.uri, '/API/identity/user?p=0&c=100&o=firstname%20ASC&f=enabled%3dtrue&f=group_id=', group_id])
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
         return json.loads(response.content)
 
     def get_role_by_name(self, request, name):
         url = ''.join([self.uri, '/API/identity/role?p=0&c=100&f=name=', name])
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
         return json.loads(response.content)[0]['id']
@@ -101,7 +106,7 @@ class BonitaManager:
     def get_human_task_by_name(self, request, name):
         name = "Configuración del proyecto"
         url = ''.join([self.uri, '/API/bpm/humanTask?p=0&c=100&f=name=', name])
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         print(json.loads(response.content))
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
@@ -119,7 +124,7 @@ class BonitaManager:
             return request.GET.get('id')
         else:
             url = ''.join([self.uri, '/API/bpm/activity?f=processId=', self.process_id, '&f=parentCaseId=', self.case_id])
-            response = requests.get(url, cookies=request.COOKIES)
+            response = requests.get(url, cookies=request.session["bonita_cookies"])
 
             if response.status_code != 200:
                 raise Exception("HTTP STATUS: " + str(response))
@@ -128,16 +133,17 @@ class BonitaManager:
     def check_activity_assignment(self, request, activity):
         url = ''.join([self.uri, '/API/bpm/activity/', activity])
 
-        response = requests.get(url, cookies=request.COOKIES)
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
 
+        print(json.loads(response.content))
         return json.loads(response.content)['assigned_id']
 
     def update_activity_assignment(self, request, activity):
         url = ''.join([self.uri, '/API/bpm/humanTask/', activity])
         headers = {
-            "X-Bonita-API-Token": request.COOKIES['X-Bonita-API-Token'],
+            "X-Bonita-API-Token": request.session["bonita_cookies"]['X-Bonita-API-Token'],
             "Content-type": "application/json"
         }
         user = self.get_user_logged(request)
@@ -145,14 +151,14 @@ class BonitaManager:
             "assigned_id": user['user_id']
         }
 
-        response = requests.put(url, json=data, headers=headers, cookies=request.COOKIES)
+        response = requests.put(url, json=data, headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
 
     def update_activity_state(self, request, activity, state, project=None):
         url = ''.join([self.uri, '/API/bpm/activity/', activity])
         headers = {
-            "X-Bonita-API-Token": request.COOKIES['X-Bonita-API-Token'],
+            "X-Bonita-API-Token": request.session["bonita_cookies"]['X-Bonita-API-Token'],
             "Content-type": "application/json"
         }
         data = {
@@ -160,7 +166,7 @@ class BonitaManager:
             # "dueDate": project.end_date
         }
 
-        response = requests.put(url, data=json.dumps(data), headers=headers, cookies=request.COOKIES)
+        response = requests.put(url, data=json.dumps(data), headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.content))
 
@@ -168,10 +174,10 @@ class BonitaManager:
         # Esto es para ver todas las variables que tiene el caso, con el tipo de cada una
         # url = ''.join([self.uri, '/API/bpm/caseVariable?p=0&c=100&f=case_id%3d', self.get_case(request)])
         # response = requests.get(url, cookies=request.COOKIES)
-
         url = ''.join([self.uri, '/API/bpm/caseVariable/', self.get_case(request), "/var_active_project"])
+
         headers = {
-            "X-Bonita-API-Token": request.COOKIES['X-Bonita-API-Token'],
+            "X-Bonita-API-Token": request.session["bonita_cookies"]['X-Bonita-API-Token'],
             "Content-type": "application/json"
         }
         data = {
@@ -179,14 +185,14 @@ class BonitaManager:
             'value':  project.id
         }
 
-        response = requests.put(url, json=data, headers=headers, cookies=request.COOKIES)
+        response = requests.put(url, json=data, headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
 
     def set_protocol_result(self, request, result):
         url = ''.join([self.uri, '/API/bpm/caseVariable/', self.get_case(request), "/protocol_result"])
         headers = {
-            "X-Bonita-API-Token": request.COOKIES['X-Bonita-API-Token'],
+            "X-Bonita-API-Token": request.session["bonita_cookies"]['X-Bonita-API-Token'],
             "Content-type": "application/json"
         }
         data = {
@@ -194,7 +200,7 @@ class BonitaManager:
             'value':  'true' if result else 'false'
         }
 
-        response = requests.put(url, json=data, headers=headers, cookies=request.COOKIES)
+        response = requests.put(url, json=data, headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
 
