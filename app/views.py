@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
-
+from .api import *
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
 
@@ -124,6 +124,13 @@ class ProjectView(View):
             user_logged = bonita_manager.get_user_logged(request)
             print(user_logged)
             users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
+            try:
+                check_assignment = bonita_manager.check_activity_assignment(request, running_activity)
+                if not check_assignment:
+                    bonita_manager.update_activity_assignment(request, running_activity)
+                    logging.info('La tarea %s fue asignada al usuario con ID: %s', running_activity, bonita_manager.check_activity_assignment(request, running_activity))
+            except Exception as e:
+                logging.error('ERROR: %s', str(e))
             ctx = {
                 "running_activity": running_activity,
                 "project_manager": {
@@ -162,8 +169,6 @@ class ProjectView(View):
                         bonita_manager = BonitaManager(request)
                         bonita_manager.set_active_project(request, project)
                         running_activity = request.POST.get("running_activity")
-                        # if bonita_manager.check_activity_assignment(request, running_activity) == "":
-                        #     bonita_manager.update_activity_assignment(request, running_activity)
                         bonita_manager.update_activity_state(request, running_activity, "completed", project)
                     error = False
                 except ():
@@ -186,6 +191,14 @@ class LocalExecutionView(View):
                 "protocol_id": protocol_id,
                 "activities": activities,
             }
+            bonita_manager = BonitaManager(request=request)
+            running_activity = bonita_manager.get_activities_by_case(request)
+            try:
+                check_assignment = bonita_manager.check_activity_assignment(request, running_activity)
+                if check_assignment == '':
+                    bonita_manager.update_activity_assignment(request, running_activity)
+            except Exception as e:
+                logging.error('ERROR: %s', str(e))
             return render(request, self.template_name, ctx)
         return redirect("home")
 
@@ -209,8 +222,6 @@ class LocalExecutionView(View):
                     error = False
                     bonita_manager = BonitaManager(request)
                     running_activity = bonita_manager.get_activities_by_case(request)
-                    if bonita_manager.check_activity_assignment(request, running_activity) == "":
-                        bonita_manager.update_activity_assignment(request, running_activity)
                     bonita_manager.update_activity_state(request, running_activity, "completed")
                     bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
                 except ():
