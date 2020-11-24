@@ -5,7 +5,7 @@ logout_submit_button.click(
 );
 
 const logout = () => {
-    $.ajax({
+    $.ajax("/", {
         type: "GET",
         dataType: "json",
         data: {
@@ -13,7 +13,7 @@ const logout = () => {
         }
     }).always(
         () => {
-            window.location.reload();
+            window.location.assign("/");
         }
     );
 };

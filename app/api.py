@@ -4,6 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from .models import ProtocolProject
+import logging
+
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
 @api_view(['POST'])
@@ -14,27 +18,41 @@ def get_protocols_by_project(request):
     :return: message, state
     """
     data = request.data
-    print(data)
+    logging.info('Se pidieron los protoocolos para el projecto %s', data['project'])
     try:
-        protocols = ProtocolProject.objects.filter(project=data['project'], project__active=True)
-        if len(protocols) > 0:
-            protocols_list = [protocol.id for protocol in protocols]
+        protocol_projects = ProtocolProject.objects.filter(project=data['project'], project__active=True)
+        protocols_list = {}
+        if len(protocol_projects) > 0:
+            for protocol_p in protocol_projects:
+                protocols_list[protocol_p.protocol.id] = {
+                        'nombre': protocol_p.protocol.name,
+                        'orden': protocol_p.protocol.order,
+                        'es_local': protocol_p.protocol.is_local
+                    }
+            logging.debug('Se deberan cargar los siguientes protocolos: %s', protocols_list)
             return JsonResponse(
-                {'data': {'protocols': protocols_list}, 'status': status.HTTP_200_OK})
+                {'protocols': protocols_list})
         else:
+            logging.debug('El proyecto no está activo.')
             return JsonResponse({'error': 'El proyecto no está activo', 'status': status.HTTP_400_BAD_REQUEST})
     except ProtocolProject.DoesNotExist:
+        logging.debug('El proyecto no existe o no está activo.')
         return JsonResponse({'error': 'El proyecto no existe o no está activo', 'status': status.HTTP_400_BAD_REQUEST})
     except Exception as e:
+        logging.debug('Excepcion: %s', str(e))
         return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
 
 
 def get_result_by_protocol(protocol, activities_checked):
     # activities_checked = 0
+    logging.info('Se pidió el resultado del protocolo %s', protocol.id)
     total = protocol.activities.count()
+    logging.info('El total de actividades era %s, la cantidad de actividades aprobadas fue %s', total, activities_checked)
     # for activity in protocol.activityprotocol_set.all():
     #     print(activity.approved)
     #     activities_checked += 1 if activity.approved else 0
 
     points = activities_checked * 100 / total
+    logging.info('Los puntos necesarios eran %s, los puntos obtenidos fueron %s', protocol.points, points)
+    logging.info('El resultado del protocolo fue %s', protocol.points <= points)
     return protocol.points <= points
