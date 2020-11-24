@@ -1,0 +1,14 @@
+.page-item.active .page-link {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.page-link {
+    color: var(--primary-blue);
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.page-link:hover {
+    color: var(--secondary-blue);
+}

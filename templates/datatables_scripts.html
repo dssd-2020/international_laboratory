@@ -1,0 +1,48 @@
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"
+        crossorigin="anonymous"
+></script>
+<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"
+        crossorigin="anonymous"
+></script>
+<script>
+    $(document).ready(
+        () => {
+            table.DataTable(
+                {
+                    "searching": false,
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "No hay información",
+                        "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                        "infoEmpty": "Mostrando 0 to 0 of 0 entradas",
+                        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                        "infoPostFix": "",
+                        "thousands": ",",
+                        "lengthMenu": "Mostrar _MENU_ entradas",
+                        "loadingRecords": "Cargando...",
+                        "processing": "Procesando...",
+                        "search": "Buscar:",
+                        "zeroRecords": "Sin resultados encontrados",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Ultimo",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        }
+                    },
+                }
+            );
+        }
+    );
+
+    // Función para scroll vertical al cambiar de páginas
+    table.on("page.dt",
+        () => {
+            $("html, body").animate(
+                {
+                    scrollTop: $(".dataTables_wrapper").offset().top - 50
+                }, 500); // Tiempo en ms que lleva realizar el scroll. A menos tiempo, más rápido y brusco. A más tiempo más lento y suave.
+        }
+    );
+
+</script>

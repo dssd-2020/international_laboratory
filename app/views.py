@@ -41,11 +41,18 @@ class HomeView(View):
 
 
 class ActivityView(View):
-    template_name = "create_activity.html"
-
     def get(self, request, *args, **kwargs):
         if session_complete(request):
-            return render(request, self.template_name)
+            if "actividades" in request.path:
+                activities = Activity.objects.all()
+                if "s" in kwargs:
+                    activities = activities.filter(pk=kwargs["s"])
+                ctx = {
+                    "activities": activities
+                }
+                return render(request, "activities_list.html", ctx)
+            else:
+                return render(request, "create_activity.html")
         return redirect("home")
 
     def post(self, request, *args, **kwargs):
@@ -65,14 +72,19 @@ class ActivityView(View):
 
 
 class ProtocolView(View):
-    template_name = "create_protocol.html"
-
     def get(self, request, *args, **kwargs):
         if session_complete(request):
-            ctx = {
-                "activities": Activity.objects.all()
-            }
-            return render(request, self.template_name, ctx)
+            ctx = {}
+            if "protocolos" in request.path:
+                protocols = Protocol.objects.all()
+                if "s" in kwargs:
+                    protocols = protocols.filter(pk=kwargs["s"])
+                ctx["protocols"] = protocols
+                return render(request, "protocols_list.html", ctx)
+            else:
+                ctx["activities"] = Activity.objects.all()
+                return render(request, "create_protocol.html", ctx)
+
         return redirect("home")
 
     def post(self, request, *args, **kwargs):

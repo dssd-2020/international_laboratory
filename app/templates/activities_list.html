@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {% include "datatables_styles.html" %}
+{% endblock %}
+
+{% block title %}
+    - Listado de actividades
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-end">
+        <div class="col-4">
+            <a href="{% url "actividad" %}"
+               class="btn btn-block btn-secondary-white province-font-bold"
+            >
+                Nueva actividad
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Actividades</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% if activities %}
+                <table id="activities-table"
+                       class="display w-100"
+                >
+                    <thead class="d-none">
+                    <tr>
+                        <th>Actividades</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for activity in activities %}
+                        <tr>
+                            <td class="d-none">
+                                {{ activity.id }}
+                            </td>
+                            <td>
+                                <div class="card my-2">
+                                    <div class="card-body">
+                                        <h5 class="card-title primary-blue m-0 province-font-medium">
+                                            {{ activity.name }}
+                                        </h5>
+                                    </div>
+                                    <div class="accordion"
+                                         id="activity-{{ activity.id }}"
+                                    >
+                                        <div class="card">
+                                            <div class="card-header"
+                                                 id="activity-{{ activity.id }}-header-1"
+                                            >
+                                                <button class="btn btn-block text-left province-font-medium"
+                                                        type="button"
+                                                        data-toggle="collapse"
+                                                        data-target="#activity-{{ activity.id }}-data-1"
+                                                        aria-expanded="true"
+                                                        aria-controls="activity-{{ activity.id }}-data-1">
+                                                    Protocolos que la utilizan
+                                                </button>
+                                            </div>
+
+                                            <div id="activity-{{ activity.id }}-data-1"
+                                                 class="collapse show"
+                                                 aria-labelledby="activity-{{ activity.id }}-header-1"
+                                                 data-parent="#activity-{{ activity.id }}"
+                                            >
+                                                <div class="card-body">
+                                                    {% with activityprotocol=activity.activityprotocol_set.all %}
+                                                        {% if activityprotocol %}
+                                                            <ul class="list-group">
+                                                                {% for ap in activityprotocol %}
+                                                                    <li class="list-group-item">
+                                                                        <a href="{% url "protocolos_buscar" s=ap.protocol.id %}"
+                                                                           class="blue-link"
+                                                                        >
+                                                                            {{ ap.protocol.name }}
+                                                                        </a>
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        {% else %}
+                                                            <p class="m-0">
+                                                                La actividad no es utilizada por ningún protocolo
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aún no se ha creado ninguna actividad</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let table = $('#activities-table');
+    </script>
+    {% include "datatables_scripts.html" %}
+{% endblock %}

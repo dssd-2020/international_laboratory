@@ -9,6 +9,7 @@ class Activity(models.Model):
     class Meta:
         verbose_name = _("Actividad")
         verbose_name_plural = _("Actividades")
+        ordering = ["-id"]
 
     def __unicode__(self):
         return u"%s" % self.name
@@ -29,6 +30,7 @@ class Protocol(models.Model):
     class Meta:
         verbose_name = _("Protocolo")
         verbose_name_plural = _("Protocolos")
+        ordering = ["-id"]
 
     def __unicode__(self):
         return u"%s" % self.name
@@ -47,7 +49,7 @@ class ActivityProtocol(models.Model):
         verbose_name_plural = _("Actividades en protocolo")
 
     def __unicode__(self):
-        return u"%s en %s" % self.activity % self.protocol
+        return u"%s en %s" % (self.activity, self.protocol)
 
     def __str__(self):
         return "{} en {}".format(self.activity, self.protocol)
@@ -64,6 +66,7 @@ class Project(models.Model):
     class Meta:
         verbose_name = _("Proyecto")
         verbose_name_plural = _("Proyectos")
+        ordering = ["-id"]
 
     def __unicode__(self):
         return u"%s" % self.name
@@ -84,7 +87,7 @@ class ProtocolProject(models.Model):
         verbose_name_plural = _("Protocolo en proyecto")
 
     def __unicode__(self):
-        return u"%s en %s" % self.protocol % self.project
+        return u"%s en %s" % (self.protocol, self.project)
 
     def __str__(self):
         return "{} en {}".format(self.protocol, self.project)

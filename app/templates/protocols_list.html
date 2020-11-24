@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {% include "datatables_styles.html" %}
+{% endblock %}
+
+{% block title %}
+    - Listado de protocolos
+{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-end">
+        <div class="col-4">
+            <a href="{% url "protocolo" %}"
+               class="btn btn-block btn-secondary-white province-font-bold"
+            >
+                Nuevo protocolo
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Protocolos</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% if protocols %}
+                <table id="protocols-table"
+                       class="display w-100"
+                >
+                    <thead class="d-none">
+                    <tr>
+                        <th>Protocolos</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for protocol in protocols %}
+                        <tr>
+                            <td class="d-none">
+                                {{ protocol.id }}
+                            </td>
+                            <td>
+                                <div class="card my-2">
+                                    <div class="card-body">
+                                        <h5 class="card-title primary-blue m-0 province-font-medium">
+                                            {{ protocol.name }}
+                                        </h5>
+                                    </div>
+                                    <div class="accordion"
+                                         id="protocol-{{ protocol.id }}"
+                                    >
+                                        <div class="card">
+                                            <div class="card-header"
+                                                 id="protocol-{{ protocol.id }}-header-1"
+                                            >
+                                                <button class="btn btn-block text-left province-font-medium"
+                                                        type="button"
+                                                        data-toggle="collapse"
+                                                        data-target="#protocol-{{ protocol.id }}-data-1"
+                                                        aria-expanded="true"
+                                                        aria-controls="protocol-{{ protocol.id }}-data-1">
+                                                    Actividades que implementan
+                                                </button>
+                                            </div>
+
+                                            <div id="protocol-{{ protocol.id }}-data-1"
+                                                 class="collapse show"
+                                                 aria-labelledby="protocol-{{ protocol.id }}-header-1"
+                                                 data-parent="#protocol-{{ protocol.id }}"
+                                            >
+                                                <div class="card-body">
+                                                    {% with activityprotocol=protocol.activityprotocol_set.all %}
+                                                        {% if activityprotocol %}
+                                                            <ul class="list-group">
+                                                                {% for ap in activityprotocol %}
+                                                                    <li class="list-group-item">
+                                                                        <a href="{% url "actividades_buscar" s=ap.activity.id %}"
+                                                                           class="blue-link"
+                                                                        >
+                                                                            {{ ap.activity.name }}
+                                                                        </a>
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        {% else %}
+                                                            <p class="m-0">
+                                                                El protocolo no implementa ninguna actividad
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </div>
+                                            </div>
+
+                                            <div class="card-header"
+                                                 id="protocol-{{ protocol.id }}-header-2"
+                                            >
+                                                <button class="btn btn-block text-left province-font-medium"
+                                                        type="button"
+                                                        data-toggle="collapse"
+                                                        data-target="#protocol-{{ protocol.id }}-data-2"
+                                                        aria-expanded="true"
+                                                        aria-controls="protocol-{{ protocol.id }}-data-2">
+                                                    Proyectos que lo utilizan
+                                                </button>
+                                            </div>
+
+                                            <div id="protocol-{{ protocol.id }}-data-2"
+                                                 class="collapse"
+                                                 aria-labelledby="protocol-{{ protocol.id }}-header-2"
+                                                 data-parent="#protocol-{{ protocol.id }}"
+                                            >
+                                                <div class="card-body">
+                                                    {% with protocolproject=protocol.protocolproject_set.all %}
+                                                        {% if protocolproject %}
+                                                            <ul class="list-group">
+                                                                {% for pp in protocolproject %}
+                                                                    <li class="list-group-item">
+                                                                        {{ pp.project.name }}
+                                                                    </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        {% else %}
+                                                            <p class="m-0">
+                                                                El protocolo no es utilizado por ningún proyecto
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aún no se ha creado ningún protocolo</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let table = $('#protocols-table');
+    </script>
+    {% include "datatables_scripts.html" %}
+{% endblock %}
