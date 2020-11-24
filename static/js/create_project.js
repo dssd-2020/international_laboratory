@@ -73,6 +73,7 @@ const protocolResponsibleTemplate = (index, protocol_name, responsible_name) => 
 };
 
 const removeProtocolResponsible = (index) => {
+    $(`select[name=project-protocol] option[value=${protocols[index][0]}]`).unwrap();
     $("#protocol-responsible-" + index).remove();
     protocols[index] = ["-1", "-1"];
 };
@@ -98,7 +99,9 @@ project_submit_button.click(
             error = "El nombre del proyecto no puede estar vacío";
 
         if (!error) {
-            let today = new Date().toISOString().slice(0, 10);
+            let today = new Date();
+            today = today.getFullYear() + "-" + ("0"+(today.getMonth()+1)).slice(-2) + "-"+ ("0" + today.getDate()).slice(-2);
+
             start_date = $("input[name=project-start-date]").val();
             end_date = $("input[name=project-end-date]").val();
             (start_date.length) ?
