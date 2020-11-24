@@ -87,7 +87,6 @@ project_submit_button.click(
         let start_date;
         let end_date;
         let project_manager = $("input[name=project-manager]").val();
-        let active = ($("input[name=project-active]").prop("checked")) ? "1" : "0";
         let running_activity = $("input[name=running_activity]").val();
 
         name = $("input[name=project-name]");
@@ -123,11 +122,11 @@ project_submit_button.click(
             }
         }
 
-        (error) ? showErrorAlert(error) : createProject(name, start_date, end_date, project_manager, active, running_activity, protocols);
+        (error) ? showErrorAlert(error) : createProject(name, start_date, end_date, project_manager, running_activity, protocols);
     }
 );
 
-const createProject = (name, start_date, end_date, project_manager, active, running_activity, protocols) => {
+const createProject = (name, start_date, end_date, project_manager, running_activity, protocols) => {
     project_submit_button.prop("disabled", true);
     $.ajax({
         type: "POST",
@@ -138,7 +137,6 @@ const createProject = (name, start_date, end_date, project_manager, active, runn
             start_date: start_date,
             end_date: end_date,
             project_manager: project_manager,
-            active: active,
             protocols: protocols,
             protocols_length: protocols.length,
             running_activity: running_activity

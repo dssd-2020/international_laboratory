@@ -135,14 +135,14 @@ class ProjectView(View):
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
-            if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "project_manager" in request.POST and "active" in request.POST and "protocols_length" in request.POST:
+            if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "project_manager" in request.POST and "protocols_length" in request.POST:
                 try:
                     project = Project.objects.create(
                         name=request.POST.get("name"),
                         start_date=request.POST.get("start_date"),
                         end_date=request.POST.get("end_date"),
                         project_manager=request.POST.get("project_manager"),
-                        active=request.POST.get("active"),
+                        active=True,
                     )
                     for index in range(0, int(request.POST.get("protocols_length"))):
                         protocol_responsible = request.POST.getlist("protocols[{}][]".format(index))
