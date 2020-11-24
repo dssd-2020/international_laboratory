@@ -15,10 +15,8 @@ class BonitaManager:
     def __init__(self, request=None):
         if request is None:
             request = {}
-        else:
-
-        # elif "user_logged" in request.session:
-            self.login(request, "yanina.echevarria", "bpm")
+        elif "user_logged" in request.session:
+            self.login(request, request.session["username"], request.session["password"])
             self.process_id = self.get_process_id(request)
             self.case_id = self.create_case(request)
 
@@ -40,6 +38,8 @@ class BonitaManager:
             }
             request.session["user_logged"] = self.get_user_logged(request)
             logging.info('El usuario %s ha iniciado sesión', request.session["user_logged"]['user_name'])
+            request.session["username"] = username
+            request.session["password"] = password
         else:
             return False
         return response
@@ -51,6 +51,8 @@ class BonitaManager:
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             requests.get(url, data=data, headers=headers)
             del request.session["user_logged"]
+            del request.session["username"]
+            del request.session["password"]
             del request.session["bonita_cookies"]
             return True
         return False
@@ -183,7 +185,7 @@ class BonitaManager:
 
         response = requests.put(url, data=json.dumps(data), headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
-            raise Exception("HTTP STATUS: " + str(response.content))
+            raise Exception("HTTP STATUS: " + str(response.status_code))
 
     def set_active_project(self, request, project):
         # Esto es para ver todas las variables que tiene el caso, con el tipo de cada una

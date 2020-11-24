@@ -20,11 +20,11 @@ def get_protocols_by_project(request):
     data = request.data
     logging.info('Se pidieron los protoocolos para el projecto %s', data['project'])
     try:
-        protocol_projects = ProtocolProject.objects.filter(project=data['project'], project__active=True)
+        protocol_projects = ProtocolProject.objects.filter(project=data['project'], project__active=True).order_by("protocol__order")
         protocols_list = {}
         if len(protocol_projects) > 0:
-            for protocol_p in protocol_projects:
-                protocols_list[protocol_p.protocol.id] = {
+            for index, protocol_p in enumerate(protocol_projects, start=1):
+                protocols_list[index] = {'id': protocol_p.protocol.id,
                         'nombre': protocol_p.protocol.name,
                         'orden': protocol_p.protocol.order,
                         'es_local': protocol_p.protocol.is_local
