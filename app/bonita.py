@@ -13,6 +13,7 @@ class BonitaManager:
         if request is None:
             request = {}
         elif "user_logged" in request.session:
+            self.login(request, request.session["username"], request.session["password"])
             self.process_id = self.get_process_id(request)
             self.case_id = self.get_case(request)
 
@@ -33,6 +34,8 @@ class BonitaManager:
                 "bonita.tenant": response.cookies["bonita.tenant"],
             }
             request.session["user_logged"] = self.get_user_logged(request)
+            request.session["username"] = username
+            request.session["password"] = password
         else:
             return False
         return response
@@ -44,6 +47,8 @@ class BonitaManager:
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             requests.get(url, data=data, headers=headers)
             del request.session["user_logged"]
+            del request.session["username"]
+            del request.session["password"]
             del request.session["bonita_cookies"]
             return True
         return False
