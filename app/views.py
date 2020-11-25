@@ -242,10 +242,21 @@ class FailureResolutionView(View):
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
-            protocol_id = 6
+            protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
+            protocol = Protocol.objects.get(pk=protocol_project.protocol.id)
+            protocol_id = protocol.id
             ctx = {
                 "protocol_id": protocol_id,
             }
+            bonita_manager = BonitaManager(request=request)
+            running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
+            print(running_activity)
+            try:
+                check_assignment = bonita_manager.check_task_assignment(request, running_activity)
+                if check_assignment == '':
+                    bonita_manager.update_task_assignment(request, running_activity)
+            except Exception as e:
+                logging.error('ERROR: %s', str(e))
             return render(request, self.template_name, ctx)
         return redirect("home")
 
@@ -253,19 +264,22 @@ class FailureResolutionView(View):
         error = True
         if session_complete(request):
             if "protocol" in request.POST and "resolution" in request.POST:
-                # (Alejo): Se simula un switch-case. Si el "resolution" recibido no coincide con ninguno, el default es "error"
+                protocol = Protocol.objects.get(pk=request.POST.get("protocol"))
                 resolution = {
                     1: "continue",
                     2: "restart_protocol",
                     3: "restart_project",
                     4: "cancel_project"
                 }.get(int(request.POST.get("resolution")), "error")
-
-                bonita_manager = BonitaManager(request)
-                bonita_manager.set_resolution_failure(request, request.POST.get("resolution"))
-
-                # (Alejo): Acá quedará por hacer el procesamiento y la interacción con Bonita según lo que hayan seleccionado
-                error = False
+                try:
+                    error = False
+                    bonita_manager = BonitaManager(request)
+                    protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
+                    running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
+                    bonita_manager.update_task_state(request, running_activity, "completed")
+                    bonita_manager.set_resolution_failure(request, request.POST.get("resolution"))
+                except ():
+                    pass
         return JsonResponse({
             "error": error
         })
