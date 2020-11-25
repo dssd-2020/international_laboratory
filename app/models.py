@@ -24,7 +24,7 @@ class Protocol(models.Model):
     end_date = models.DateTimeField(_("Fecha de fin"))
     order = models.IntegerField(_("Orden de ejecución"), null=False)
     is_local = models.BooleanField(_("Es local"), default=True)
-    points = models.FloatField(_("Puntaje necesario"), default=0)
+    points = models.FloatField(_("Puntaje necesario"), null=False)
     activities = models.ManyToManyField(Activity, through='ActivityProtocol', verbose_name="Actividades")
 
     class Meta:
@@ -62,6 +62,7 @@ class Project(models.Model):
     project_manager = models.CharField(_("Jefe de proyecto"), max_length=10)
     protocols = models.ManyToManyField(Protocol, through='ProtocolProject', verbose_name="Protocolos")
     active = models.BooleanField(_("Activo"), default=True)
+    case_id = models.CharField(_("Número de caso"), max_length=5)
 
     class Meta:
         verbose_name = _("Proyecto")
@@ -78,9 +79,10 @@ class Project(models.Model):
 class ProtocolProject(models.Model):
     protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", on_delete=models.CASCADE)
     project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.CASCADE)
-    result = models.CharField(_("Resultado"), max_length=150)
-    approved = models.BooleanField(_("Aprobado"), default=False)
-    responsible = models.CharField(_("Responsable"), max_length=10, default="1")
+    result = models.FloatField(_("Resultado"), blank=True, null=True)
+    approved = models.BooleanField(_("Aprobado"), blank=True, null=True)
+    responsible = models.CharField(_("Responsable"), max_length=10)
+    running_task = models.CharField(_("Tarea en ejecución"), max_length=10)
 
     class Meta:
         verbose_name = _("Protocolo en proyecto")
