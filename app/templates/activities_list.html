@@ -31,7 +31,8 @@
                 >
                     <thead class="d-none">
                     <tr>
-                        <th>Actividades</th>
+                        <th>ID</th>
+                        <th>Actividad</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -108,8 +109,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        let table = $('#activities-table');
-    </script>
     {% include "datatables_scripts.html" %}
 {% endblock %}

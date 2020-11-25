@@ -1,6 +1,14 @@
 let notification_icon = $("#notification-icon");
 let notification_count = $("#notification-count");
 
+$(
+    () => {
+        checkNotifications();
+        let check_notifications = setInterval(checkNotifications, 15000);
+    }
+);
+
+
 const checkNotifications = () => {
     $.ajax(notifications_url, {
         type: "GET",

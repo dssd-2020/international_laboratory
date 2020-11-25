@@ -4,7 +4,7 @@ from django.views import View
 
 from .api import *
 from .bonita import BonitaManager
-from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
+from .models import *
 
 
 def session_complete(request):
@@ -285,18 +285,21 @@ class FailureResolutionView(View):
         })
 
 
-class Notifications(View):
+class NotificationsView(View):
     template_name = "notifications.html"
 
     def get(self, request, *args, **kwargs, ):
         if session_complete(request):
+            notifications = Notification.objects.filter(user_id=request.session["user_logged"]["user_id"])
+            not_view_notifications = notifications.filter(view=False)
+            view_notifications = notifications.filter(view=True)
             if "get_notifications_count" in request.GET:
                 return JsonResponse({
-                    "notifications_count": 2
+                    "notifications_count": not_view_notifications.count()
                 })
-
             ctx = {
-                "notifications": [],
+                "not_view_notifications": not_view_notifications,
+                "view_notifications": view_notifications,
             }
             return render(request, self.template_name, ctx)
         return redirect("home")

@@ -31,7 +31,8 @@
                 >
                     <thead class="d-none">
                     <tr>
-                        <th>Protocolos</th>
+                        <th>ID</th>
+                        <th>Protocolo</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -145,8 +146,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        let table = $('#protocols-table');
-    </script>
     {% include "datatables_scripts.html" %}
 {% endblock %}
