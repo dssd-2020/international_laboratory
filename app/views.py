@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
+
 from .api import *
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
@@ -128,7 +129,8 @@ class ProjectView(View):
                 check_assignment = bonita_manager.check_activity_assignment(request, running_activity)
                 if not check_assignment:
                     bonita_manager.update_activity_assignment(request, running_activity)
-                    logging.info('La tarea %s fue asignada al usuario con ID: %s', running_activity, bonita_manager.check_activity_assignment(request, running_activity))
+                    logging.info('La tarea %s fue asignada al usuario con ID: %s', running_activity,
+                                 bonita_manager.check_activity_assignment(request, running_activity))
             except Exception as e:
                 logging.error('ERROR: %s', str(e))
             ctx = {
@@ -261,3 +263,20 @@ class FailureResolutionView(View):
         return JsonResponse({
             "error": error
         })
+
+
+class Notifications(View):
+    template_name = "notifications.html"
+
+    def get(self, request, *args, **kwargs, ):
+        if session_complete(request):
+            if "get_notifications_count" in request.GET:
+                return JsonResponse({
+                    "notifications_count": 2
+                })
+
+            ctx = {
+                "notifications": [],
+            }
+            return render(request, self.template_name, ctx)
+        return redirect("home")

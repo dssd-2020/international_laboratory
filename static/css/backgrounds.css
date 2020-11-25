@@ -1,0 +1,56 @@
+/* Colores */
+
+:root {
+    --primary-blue: #00a797;
+    --secondary-blue: #01857b;
+    --tertiary-blue: #018077;
+    --stronger-grey: #202020;
+    --strong-grey: #404040;
+    --hard-grey: #606060;
+    --grey: #808080;
+    --soft-grey: #a0a0a0;
+    --light-grey: #c0c0c0;
+    --lighter-grey: #e0e0e0;
+    --background-grey: #f0f0f0;
+    --blue-link: #0000a0;
+    --primary-red: #cb0900;
+    --secondary-red: #b20900;
+    --tertiary-red: #990900;
+    --light-red: #aa6a6a;
+}
+
+.primary-blue {
+    color: var(--primary-blue) !important;
+}
+
+.stronger-grey {
+    color: var(--stronger-grey) !important;
+}
+
+.strong-grey {
+    color: var(--strong-grey) !important;
+}
+
+.hard-grey {
+    color: var(--hard-grey) !important;
+}
+
+.grey {
+    color: var(--grey) !important;
+}
+
+.soft-grey {
+    color: var(--soft-grey) !important;
+}
+
+.light-grey {
+    color: var(--light-grey) !important;
+}
+
+.lighter-grey {
+    color: var(--lighter-grey) !important;
+}
+
+.blue-link {
+    color: var(--blue-link) !important;
+}
