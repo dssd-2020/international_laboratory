@@ -8,7 +8,6 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 class BonitaManager:
     process_id = None
-    case_id = None
     cookies = None
     uri = "http://localhost:8080/bonita"
 
@@ -16,9 +15,8 @@ class BonitaManager:
         if request is None:
             request = {}
         elif "user_logged" in request.session:
-            self.login(request, request.session["username"], request.session["password"])
+            # self.login(request, request.session["username"], request.session["password"])
             self.process_id = self.get_process_id(request)
-            self.case_id = self.create_case(request)
 
     def login(self, request, username, password):
         url = "".join([self.uri, "/loginservice"])
@@ -70,8 +68,8 @@ class BonitaManager:
             response = requests.post(url, headers=headers, cookies=request.session["bonita_cookies"])
             if response.status_code != 200:
                 raise Exception("HTTP STATUS: " + str(response))
-            self.case_id = str(json.loads(response.content)["caseId"])
-            return self.case_id
+            logging.info('Se creó el caso: N° %s', str(json.loads(response.content)["caseId"]))
+            return str(json.loads(response.content)["caseId"])
 
     def get_case(self, request):
         url = "".join([self.uri, "/API/bpm/case?p=0&c=100&f=processDefinitionId=", self.process_id])
@@ -139,25 +137,32 @@ class BonitaManager:
             raise Exception("HTTP STATUS: " + str(response))
         return json.loads(response.content)[0]["id"]
 
-    def get_activities_by_case(self, request):
+    def get_activities_by_case(self, request, case_id):
         if request.GET.get("id"):
             return request.GET.get("id")
         else:
-            url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", self.case_id])
+            url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", case_id])
             response = requests.get(url, cookies=request.session["bonita_cookies"])
 
             if response.status_code != 200:
                 raise Exception("HTTP STATUS: " + str(response))
             return json.loads(response.content)[0]["id"]
 
-    def check_activity_assignment(self, request, activity):
+    def check_task_assignment(self, request, activity):
         url = "".join([self.uri, "/API/bpm/activity/", activity])
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
         return json.loads(response.content)["assigned_id"]
 
-    def update_activity_assignment(self, request, activity):
+    def check_task_state(self, request, activity):
+        url = "".join([self.uri, "/API/bpm/activity/", activity])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response.status_code))
+        return json.loads(response.content)["state"]
+
+    def update_task_assignment(self, request, activity):
         url = "".join([self.uri, "/API/bpm/humanTask/", activity])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
@@ -172,7 +177,7 @@ class BonitaManager:
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code) + '----' + str(response))
 
-    def update_activity_state(self, request, activity, state, project=None):
+    def update_task_state(self, request, activity, state, project=None):
         url = "".join([self.uri, "/API/bpm/activity/", activity])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
