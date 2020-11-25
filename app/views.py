@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
+
 from .api import *
 from .bonita import BonitaManager
 from .models import Activity, Protocol, ActivityProtocol, Project, ProtocolProject
@@ -268,3 +269,20 @@ class FailureResolutionView(View):
         return JsonResponse({
             "error": error
         })
+
+
+class Notifications(View):
+    template_name = "notifications.html"
+
+    def get(self, request, *args, **kwargs, ):
+        if session_complete(request):
+            if "get_notifications_count" in request.GET:
+                return JsonResponse({
+                    "notifications_count": 2
+                })
+
+            ctx = {
+                "notifications": [],
+            }
+            return render(request, self.template_name, ctx)
+        return redirect("home")

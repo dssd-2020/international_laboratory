@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {% include "datatables_styles.html" %}
+{% endblock %}
+
+{% block title %}
+    - Notificaciones
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col text-center">
+            <h2 class="province-font-black">Notificaciones</h2>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        let table = $('#notifications-view-table');
+    </script>
+    {% include "datatables_scripts.html" %}
+    <script>
+        table = $('#notification-notview-table');
+    </script>
+    {% include "datatables_scripts.html" %}
+{% endblock %}
