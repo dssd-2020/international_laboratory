@@ -188,16 +188,15 @@ class LocalExecutionView(View):
 
     def get(self, request, *args, **kwargs):
         if session_complete(request):
-            # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
-            protocol_id = 4
-            protocol = Protocol.objects.get(pk=protocol_id)
+            protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
+            protocol = Protocol.objects.get(pk=protocol_project.protocol.id)
             activities = protocol.activities.all()
             ctx = {
-                "protocol_id": protocol_id,
+                "protocol_id": protocol.id,
                 "activities": activities,
             }
             bonita_manager = BonitaManager(request=request)
-            running_activity = bonita_manager.get_activities_by_case(request)
+            running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
             try:
                 check_assignment = bonita_manager.check_task_assignment(request, running_activity)
                 if check_assignment == '':
@@ -226,7 +225,8 @@ class LocalExecutionView(View):
                             activity_protocol.save()
                     error = False
                     bonita_manager = BonitaManager(request)
-                    running_activity = bonita_manager.get_activities_by_case(request)
+                    protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
+                    running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
                     bonita_manager.update_task_state(request, running_activity, "completed")
                     bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
                 except ():

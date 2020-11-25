@@ -143,7 +143,6 @@ class BonitaManager:
         else:
             url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", case_id])
             response = requests.get(url, cookies=request.session["bonita_cookies"])
-
             if response.status_code != 200:
                 raise Exception("HTTP STATUS: " + str(response))
             return json.loads(response.content)[0]["id"]
