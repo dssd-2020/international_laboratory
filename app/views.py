@@ -119,20 +119,9 @@ class ProjectView(View):
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             bonita_manager = BonitaManager(request=request)
-            running_activity = bonita_manager.get_activities_by_case(request)
-            print(running_activity)
             user_logged = bonita_manager.get_user_logged(request)
-            print(user_logged)
             users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
-            try:
-                check_assignment = bonita_manager.check_activity_assignment(request, running_activity)
-                if not check_assignment:
-                    bonita_manager.update_activity_assignment(request, running_activity)
-                    logging.info('La tarea %s fue asignada al usuario con ID: %s', running_activity, bonita_manager.check_activity_assignment(request, running_activity))
-            except Exception as e:
-                logging.error('ERROR: %s', str(e))
             ctx = {
-                "running_activity": running_activity,
                 "project_manager": {
                     "id": user_logged["user_id"],
                     "name": user_logged["user_name"]
@@ -149,12 +138,20 @@ class ProjectView(View):
         if session_complete(request):
             if "name" in request.POST and "start_date" in request.POST and "end_date" in request.POST and "project_manager" in request.POST and "protocols_length" in request.POST:
                 try:
+                    bonita_manager = BonitaManager(request)
+                    try:
+                        case_id = bonita_manager.create_case(request)
+                    except ():
+                        return JsonResponse({
+                            "error": error
+                        })
                     project = Project.objects.create(
                         name=request.POST.get("name"),
                         start_date=request.POST.get("start_date"),
                         end_date=request.POST.get("end_date"),
                         project_manager=request.POST.get("project_manager"),
                         active=True,
+                        case_id=case_id
                     )
                     for index in range(0, int(request.POST.get("protocols_length"))):
                         protocol_responsible = request.POST.getlist("protocols[{}][]".format(index))
@@ -166,10 +163,17 @@ class ProjectView(View):
                                 project=project,
                                 responsible=responsible
                             )
-                        bonita_manager = BonitaManager(request)
+                    try:
                         bonita_manager.set_active_project(request, project)
-                        running_activity = request.POST.get("running_activity")
-                        bonita_manager.update_activity_state(request, running_activity, "completed", project)
+                        running_activity = bonita_manager.get_activities_by_case(request, case_id)
+                        bonita_manager.update_task_assignment(request, running_activity)
+                        logging.info('La tarea %s fue asignada al usuario con ID: %s', running_activity,
+                                     bonita_manager.check_task_assignment(request, running_activity))
+                        bonita_manager.update_task_state(request, running_activity, "completed", project)
+                        logging.info('La tarea %s pasó al estado: %s', running_activity,
+                                     bonita_manager.check_task_state(request, running_activity))
+                    except Exception as e:
+                        logging.error('ERROR: %s', str(e))
                     error = False
                 except ():
                     pass
@@ -194,9 +198,9 @@ class LocalExecutionView(View):
             bonita_manager = BonitaManager(request=request)
             running_activity = bonita_manager.get_activities_by_case(request)
             try:
-                check_assignment = bonita_manager.check_activity_assignment(request, running_activity)
+                check_assignment = bonita_manager.check_task_assignment(request, running_activity)
                 if check_assignment == '':
-                    bonita_manager.update_activity_assignment(request, running_activity)
+                    bonita_manager.update_task_assignment(request, running_activity)
             except Exception as e:
                 logging.error('ERROR: %s', str(e))
             return render(request, self.template_name, ctx)
@@ -222,7 +226,7 @@ class LocalExecutionView(View):
                     error = False
                     bonita_manager = BonitaManager(request)
                     running_activity = bonita_manager.get_activities_by_case(request)
-                    bonita_manager.update_activity_state(request, running_activity, "completed")
+                    bonita_manager.update_task_state(request, running_activity, "completed")
                     bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
                 except ():
                     pass

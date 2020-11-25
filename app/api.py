@@ -18,7 +18,7 @@ def get_protocols_by_project(request):
     :return: message, state
     """
     data = request.data
-    logging.info('Se pidieron los protoocolos para el projecto %s', data['project'])
+    logging.info('Se pidieron los protocolos para el projecto %s', data['project'])
     try:
         protocol_projects = ProtocolProject.objects.filter(project=data['project'], project__active=True).order_by("protocol__order")
         protocols_list = {}
