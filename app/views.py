@@ -260,6 +260,9 @@ class FailureResolutionView(View):
                     4: "cancel_project"
                 }.get(int(request.POST.get("resolution")), "error")
 
+                bonita_manager = BonitaManager(request)
+                bonita_manager.set_resolution_failure(request, request.POST.get("resolution"))
+
                 # (Alejo): Acá quedará por hacer el procesamiento y la interacción con Bonita según lo que hayan seleccionado
                 error = False
         return JsonResponse({

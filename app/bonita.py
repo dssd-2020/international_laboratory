@@ -235,3 +235,25 @@ class BonitaManager:
         url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/protocol_result"])
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         print(response.content)
+
+
+    def set_resolution_failure(self, request, result):
+        
+        url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/resolution_failure"])
+        headers = {
+            "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
+            "Content-type": "application/json"
+        }
+        data = {
+            "type": "java.lang.String",
+            "value": result
+        }
+
+        response = requests.put(url, json=data, headers=headers, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+
+        # VER EL VALOR DE LA VARIABLE ACTUALIZADA
+        url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/resolution_failure"])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        print("resolution failure... " + response.content)
