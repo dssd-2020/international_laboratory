@@ -93,3 +93,20 @@ class ProtocolProject(models.Model):
 
     def __str__(self):
         return "{} en {}".format(self.protocol, self.project)
+
+
+class Notification(models.Model):
+    message = models.TextField(_("Mensaje"))
+    user_id = models.CharField(_("Destinatario"), max_length=3)
+    view = models.BooleanField(_("Leída"), default=False)
+    protocol_project = models.ForeignKey(ProtocolProject, verbose_name="Protocolo", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("Notificación")
+        verbose_name_plural = _("Notificaciones")
+
+    def __unicode__(self):
+        return u"%s" % self.message
+
+    def __str__(self):
+        return self.message
