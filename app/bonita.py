@@ -15,7 +15,7 @@ class BonitaManager:
         if request is None:
             request = {}
         elif "user_logged" in request.session:
-            # self.login(request, request.session["username"], request.session["password"])
+            self.login(request, request.session["username"], request.session["password"])
             self.process_id = self.get_process_id(request)
 
     def login(self, request, username, password):
