@@ -14,15 +14,86 @@
             <h2 class="province-font-black">Notificaciones</h2>
         </div>
     </div>
+    <div class="row mb-5">
+        <div class="col">
+            <h5 class="primary-blue province-font-medium">
+                Notificaciones sin leer
+            </h5>
+            {% if not_view_notifications %}
+                <table id="not-view-notifications-table"
+                       class="display w-100"
+                >
+                    <thead class="d-none">
+                    <tr>
+                        <th>ID</th>
+                        <th>Notificación</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for notification in not_view_notifications %}
+                        <tr>
+                            <td class="d-none">
+                                {{ notification.id }}
+                            </td>
+                            <td>
+                                <div class="card my-2">
+                                    <div class="card-body">
+                                        <p class="card-title m-0 ">
+                                            {{ notification.message }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No hay notificaciones</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5 class="primary-blue province-font-medium">
+                Notificaciones leídas
+            </h5>
+            {% if view_notifications %}
+                <table id="view-notifications-table"
+                       class="display w-100"
+                >
+                    <thead class="d-none">
+                    <tr>
+                        <th>ID</th>
+                        <th>Notificación</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for notification in view_notifications %}
+                        <tr>
+                            <td class="d-none">
+                                {{ notification.id }}
+                            </td>
+                            <td>
+                                <div class="card my-2">
+                                    <div class="card-body">
+                                        <p class="card-title m-0 ">
+                                            {{ notification.message }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No hay notificaciones</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        let table = $('#notifications-view-table');
-    </script>
-    {% include "datatables_scripts.html" %}
-    <script>
-        table = $('#notification-notview-table');
-    </script>
     {% include "datatables_scripts.html" %}
 {% endblock %}
