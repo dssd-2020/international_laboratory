@@ -187,8 +187,8 @@ class LocalExecutionView(View):
     template_name = "local_execution.html"
 
     def get(self, request, *args, **kwargs):
-        if session_complete(request):
-            protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
+        if session_complete(request) and "protocol_project" in kwargs:
+            protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
             protocol = Protocol.objects.get(pk=protocol_project.protocol.id)
             activities = protocol.activities.all()
             ctx = {
@@ -261,8 +261,8 @@ class FailureResolutionView(View):
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
-            if "protocol_project" in request.POST and "resolution" in request.POST:
-                protocol_project_id = request.POST.get("protocol_project")
+            if "protocol_project" in kwargs and "resolution" in request.POST:
+                protocol_project_id = kwargs["protocol_project"]
                 protocol_project = ProtocolProject.objects.get(pk=protocol_project_id)
                 resolution_case = int(request.POST.get("resolution"))
                 resolution = {
