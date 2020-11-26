@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
 from .api import *
 from .bonita import BonitaManager
+from .decorators import login_required
 from .models import *
 
 
@@ -42,6 +42,7 @@ class HomeView(View):
 
 
 class ActivityView(View):
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             if "actividades" in request.path:
@@ -56,6 +57,7 @@ class ActivityView(View):
                 return render(request, "create_activity.html")
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -73,6 +75,7 @@ class ActivityView(View):
 
 
 class ProtocolView(View):
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             ctx = {}
@@ -88,6 +91,7 @@ class ProtocolView(View):
 
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -117,6 +121,7 @@ class ProtocolView(View):
 class ProjectView(View):
     template_name = "create_project.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             bonita_manager = BonitaManager(request=request)
@@ -134,6 +139,7 @@ class ProjectView(View):
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -186,6 +192,7 @@ class ProjectView(View):
 class LocalExecutionView(View):
     template_name = "local_execution.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request) and "protocol_project" in kwargs:
             protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
@@ -205,6 +212,7 @@ class LocalExecutionView(View):
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -239,6 +247,7 @@ class LocalExecutionView(View):
 class FailureResolutionView(View):
     template_name = "failure_resolution.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request) and "protocol_project" in kwargs:
             protocol_project_id = kwargs["protocol_project"]
@@ -258,6 +267,7 @@ class FailureResolutionView(View):
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -289,6 +299,7 @@ class FailureResolutionView(View):
 class NotificationsView(View):
     template_name = "notifications.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             notifications = Notification.objects.filter(user_id=request.session["user_logged"]["user_id"])
@@ -305,6 +316,7 @@ class NotificationsView(View):
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if "notification_id" in request.POST:
