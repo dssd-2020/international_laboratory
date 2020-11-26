@@ -82,7 +82,7 @@ class ProtocolProject(models.Model):
     result = models.FloatField(_("Resultado"), blank=True, null=True)
     approved = models.BooleanField(_("Aprobado"), blank=True, null=True)
     responsible = models.CharField(_("Responsable"), max_length=10)
-    running_task = models.CharField(_("Tarea en ejecución"), max_length=10)
+    running_task = models.CharField(_("Tarea en ejecución"), max_length=10, null=True)
 
     class Meta:
         verbose_name = _("Protocolo en proyecto")

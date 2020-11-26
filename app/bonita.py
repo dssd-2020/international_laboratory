@@ -215,8 +215,8 @@ class BonitaManager:
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         print(response.content)
 
-    def set_protocol_result(self, request, result):
-        url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/protocol_result"])
+    def set_protocol_result(self, request, case_id, result):
+        url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/protocol_state_approved"])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
             "Content-type": "application/json"
@@ -231,12 +231,12 @@ class BonitaManager:
             raise Exception("HTTP STATUS: " + str(response))
 
         # VER EL VALOR DE LA VARIABLE ACTUALIZADA
-        url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/protocol_result"])
+        url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/protocol_state_approved"])
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         print(response.content)
 
-    def set_resolution_failure(self, request, result):
-        url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/resolution_failure_var"])
+    def set_resolution_failure(self, request, case_id, result):
+        url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/resolution_failure_var"])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
             "Content-type": "application/json"

@@ -231,10 +231,10 @@ class LocalExecutionView(View):
                         activity_protocol.save()
                         activities_checked += 1
                 bonita_manager = BonitaManager(request)
-                protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
                 running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
+                get_result_by_protocol(protocol_project, activities_checked)
+                bonita_manager.set_protocol_result(request, protocol_project.project.case_id, protocol_project.approved)
                 bonita_manager.update_task_state(request, running_activity, "completed")
-                bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
                 error = False
             except ():
                 pass
@@ -255,13 +255,8 @@ class FailureResolutionView(View):
         }
         bonita_manager = BonitaManager(request=request)
         running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
-        print(running_activity)
-        try:
-            check_assignment = bonita_manager.check_task_assignment(request, running_activity)
-            if check_assignment == "":
-                bonita_manager.update_task_assignment(request, running_activity)
-        except Exception as e:
-            logging.error("ERROR: %s", str(e))
+        bonita_manager.update_task_assignment(request, running_activity)
+
         return render(request, self.template_name, ctx)
 
     @login_required
@@ -278,12 +273,18 @@ class FailureResolutionView(View):
                 4: "cancel_project"
             }.get(resolution_case, False)
             if resolution:
+                if resolution == "continue":
+                    protocol_project.approved = False
+                elif resolution == "restart_protocol":
+                    protocol_project.approved = None
+                    protocol_project.result = None
+                protocol_project.save()
                 try:
                     bonita_manager = BonitaManager(request)
                     running_activity = bonita_manager.get_activities_by_case(request,
                                                                              protocol_project.project.case_id)
+                    bonita_manager.set_resolution_failure(request, protocol_project.project.case_id, resolution_case)
                     bonita_manager.update_task_state(request, running_activity, "completed")
-                    bonita_manager.set_resolution_failure(request, resolution_case)
                     error = False
                 except ():
                     pass
