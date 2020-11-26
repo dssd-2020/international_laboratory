@@ -35,7 +35,7 @@ resolution_submit_button.click(
             dataType: "json",
             data: {
                 csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-                protocol: $("input[name=protocol]").val(),
+                protocol_project: $("input[name=protocol_project]").val(),
                 resolution: resolution,
             }
         }).done(

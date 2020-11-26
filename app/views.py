@@ -240,11 +240,10 @@ class FailureResolutionView(View):
     template_name = "failure_resolution.html"
 
     def get(self, request, *args, **kwargs):
-        if session_complete(request):
-            # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
-            protocol_id = 6
+        if session_complete(request) and "protocol_project" in kwargs:
+            protocol_project_id = kwargs["protocol_project"]
             ctx = {
-                "protocol_id": protocol_id,
+                "protocol_project_id": protocol_project_id,
             }
             return render(request, self.template_name, ctx)
         return redirect("home")
@@ -252,7 +251,7 @@ class FailureResolutionView(View):
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
-            if "protocol" in request.POST and "resolution" in request.POST:
+            if "protocol_project" in request.POST and "resolution" in request.POST:
                 # (Alejo): Se simula un switch-case. Si el "resolution" recibido no coincide con ninguno, el default es "error"
                 resolution = {
                     1: "continue",
@@ -289,3 +288,17 @@ class NotificationsView(View):
             }
             return render(request, self.template_name, ctx)
         return redirect("home")
+
+    def post(self, request, *args, **kwargs):
+        error = True
+        if "notification_id" in request.POST:
+            try:
+                notification = Notification.objects.get(pk=request.POST.get("notification_id"))
+                notification.view = True
+                notification.save()
+                error = False
+            except ():
+                pass
+        return JsonResponse({
+            "error": error
+        })
