@@ -189,10 +189,9 @@ class LocalExecutionView(View):
     def get(self, request, *args, **kwargs):
         if session_complete(request) and "protocol_project" in kwargs:
             protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
-            protocol = Protocol.objects.get(pk=protocol_project.protocol.id)
+            protocol = protocol_project.protocol
             activities = protocol.activities.all()
             ctx = {
-                "protocol_id": protocol.id,
                 "activities": activities,
             }
             bonita_manager = BonitaManager(request=request)
@@ -209,8 +208,9 @@ class LocalExecutionView(View):
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
-            if "protocol" in request.POST:
-                protocol = Protocol.objects.get(pk=request.POST.get("protocol"))
+            if "protocol_project" in kwargs:
+                protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
+                protocol = protocol_project.protocol
                 activities = protocol.activities.all()
                 try:
                     activities_checked = 0
@@ -220,15 +220,15 @@ class LocalExecutionView(View):
                                 protocol=protocol,
                                 activity=activity
                             )
-                            activities_checked += 1
-                            activity_protocol.approved = request.POST.get("activities[{}]".format(activity.id))
+                            activity_protocol.approved = True
                             activity_protocol.save()
-                    error = False
+                            activities_checked += 1
                     bonita_manager = BonitaManager(request)
                     protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
                     running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
                     bonita_manager.update_task_state(request, running_activity, "completed")
                     bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
+                    error = False
                 except ():
                     pass
         return JsonResponse({
