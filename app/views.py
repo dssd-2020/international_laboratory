@@ -28,7 +28,10 @@ class HomeView(View):
 
     @login_required
     def home(self, request, *args, **kwargs):
-        return render(request, "home.html")
+        ctx = {
+            "managed_projects": Project.objects.filter(project_manager=request.session["user_logged"]["user_id"])
+        }
+        return render(request, "home.html", ctx)
 
     def post(self, request, *args, **kwargs):
         error = True
