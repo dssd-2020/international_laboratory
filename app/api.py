@@ -87,3 +87,27 @@ def get_result_by_protocol(protocol, activities_checked):
     logging.info('Los puntos necesarios eran %s, los puntos obtenidos fueron %s', protocol.points, points)
     logging.info('El resultado del protocolo fue %s', protocol.points <= points)
     return protocol.points <= points
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def set_result_remote_protocol(request):
+    """
+    :param request: protocol_project, approved
+    :return: message, state
+    """
+    data = request.data
+
+    try:
+        protocol_project = ProtocolProject.objects.get(pk=request.data["protocol_project"])
+        if protocol_project:
+            protocol_project.approved = request.data['approved']
+            protocol_project.save()
+            return JsonResponse(
+                {'message': "El protocolo fue actualizado", 'status': status.HTTP_200_OK})
+    except ProtocolProject.DoesNotExist:
+        logging.debug('Otro error que todavia no se.')
+        return JsonResponse({'error': 'Otro error que todavia no se', 'status': status.HTTP_400_BAD_REQUEST})
+    except Exception as e:
+        logging.debug('Excepcion: %s', str(e))
+        return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
