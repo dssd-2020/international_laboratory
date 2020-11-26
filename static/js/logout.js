@@ -5,7 +5,7 @@ logout_submit_button.click(
 );
 
 const logout = () => {
-    $.ajax("/", {
+    $.ajax(logout_url, {
         type: "GET",
         dataType: "json",
         data: {

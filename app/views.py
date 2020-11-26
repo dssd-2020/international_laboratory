@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
 from .api import *
 from .bonita import BonitaManager
+from .decorators import login_required
 from .models import *
 
 
@@ -14,19 +14,24 @@ def session_complete(request):
 class HomeView(View):
     template_name = "home.html"
 
-    def get(self, request, *args, **kwargs, ):
-        if "logout" in request.GET:
+    def get(self, request, *args, **kwargs):
+        if "login" in request.path:
+            return render(request, "login.html")
+
+        if "logout" in request.path:
             bonita_manager = BonitaManager(request=request)
             return JsonResponse({
                 "error": bonita_manager.logout(request)
             })
 
-        if session_complete(request):
-            pass
-        else:
-            self.template_name = "login.html"
+        return self.home(request, *args, **kwargs)
 
-        return render(request, self.template_name)
+    @login_required
+    def home(self, request, *args, **kwargs):
+        ctx = {
+            "managed_projects": Project.objects.filter(project_manager=request.session["user_logged"]["user_id"])
+        }
+        return render(request, "home.html", ctx)
 
     def post(self, request, *args, **kwargs):
         error = True
@@ -42,6 +47,7 @@ class HomeView(View):
 
 
 class ActivityView(View):
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             if "actividades" in request.path:
@@ -56,6 +62,7 @@ class ActivityView(View):
                 return render(request, "create_activity.html")
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -73,6 +80,7 @@ class ActivityView(View):
 
 
 class ProtocolView(View):
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             ctx = {}
@@ -88,6 +96,7 @@ class ProtocolView(View):
 
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -117,6 +126,7 @@ class ProtocolView(View):
 class ProjectView(View):
     template_name = "create_project.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request):
             bonita_manager = BonitaManager(request=request)
@@ -134,6 +144,7 @@ class ProjectView(View):
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -168,13 +179,13 @@ class ProjectView(View):
                         bonita_manager.set_active_project(request, project)
                         running_activity = bonita_manager.get_activities_by_case(request, case_id)
                         bonita_manager.update_task_assignment(request, running_activity)
-                        logging.info('La tarea %s fue asignada al usuario con ID: %s', running_activity,
+                        logging.info("La tarea %s fue asignada al usuario con ID: %s", running_activity,
                                      bonita_manager.check_task_assignment(request, running_activity))
                         bonita_manager.update_task_state(request, running_activity, "completed", project)
-                        logging.info('La tarea %s pasó al estado: %s', running_activity,
+                        logging.info("La tarea %s pasó al estado: %s", running_activity,
                                      bonita_manager.check_task_state(request, running_activity))
                     except Exception as e:
-                        logging.error('ERROR: %s', str(e))
+                        logging.error("ERROR: %s", str(e))
                     error = False
                 except ():
                     pass
@@ -186,6 +197,7 @@ class ProjectView(View):
 class LocalExecutionView(View):
     template_name = "local_execution.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request) and "protocol_project" in kwargs:
             protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
@@ -198,13 +210,14 @@ class LocalExecutionView(View):
             running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
             try:
                 check_assignment = bonita_manager.check_task_assignment(request, running_activity)
-                if check_assignment == '':
+                if check_assignment == "":
                     bonita_manager.update_task_assignment(request, running_activity)
             except Exception as e:
-                logging.error('ERROR: %s', str(e))
+                logging.error("ERROR: %s", str(e))
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -239,6 +252,7 @@ class LocalExecutionView(View):
 class FailureResolutionView(View):
     template_name = "failure_resolution.html"
 
+    @login_required
     def get(self, request, *args, **kwargs):
         if session_complete(request) and "protocol_project" in kwargs:
             protocol_project_id = kwargs["protocol_project"]
@@ -251,13 +265,14 @@ class FailureResolutionView(View):
             print(running_activity)
             try:
                 check_assignment = bonita_manager.check_task_assignment(request, running_activity)
-                if check_assignment == '':
+                if check_assignment == "":
                     bonita_manager.update_task_assignment(request, running_activity)
             except Exception as e:
-                logging.error('ERROR: %s', str(e))
+                logging.error("ERROR: %s", str(e))
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
@@ -274,7 +289,8 @@ class FailureResolutionView(View):
                 if resolution:
                     try:
                         bonita_manager = BonitaManager(request)
-                        running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
+                        running_activity = bonita_manager.get_activities_by_case(request,
+                                                                                 protocol_project.project.case_id)
                         bonita_manager.update_task_state(request, running_activity, "completed")
                         bonita_manager.set_resolution_failure(request, resolution_case)
                         error = False
@@ -288,7 +304,8 @@ class FailureResolutionView(View):
 class NotificationsView(View):
     template_name = "notifications.html"
 
-    def get(self, request, *args, **kwargs, ):
+    @login_required
+    def get(self, request, *args, **kwargs):
         if session_complete(request):
             notifications = Notification.objects.filter(user_id=request.session["user_logged"]["user_id"])
             not_view_notifications = notifications.filter(view=False)
@@ -304,6 +321,7 @@ class NotificationsView(View):
             return render(request, self.template_name, ctx)
         return redirect("home")
 
+    @login_required
     def post(self, request, *args, **kwargs):
         error = True
         if "notification_id" in request.POST:

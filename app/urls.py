@@ -6,6 +6,8 @@ from .views import *
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
+    path("logout/", HomeView.as_view(), name="logout"),
+    path("login/", HomeView.as_view(), name="login"),
     path("actividad/", ActivityView.as_view(), name="actividad"),
     path("actividades/", ActivityView.as_view(), name="actividades"),
     path("actividades/<int:s>/", ActivityView.as_view(), name="actividades_buscar"),
