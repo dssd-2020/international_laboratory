@@ -7,7 +7,7 @@ def login_required(function):
         if "user_logged" in session and "bonita_cookies" in session:
             return function(request, *args, **kwargs)
         else:
-            return redirect("home")
+            return redirect("login")
 
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__

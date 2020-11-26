@@ -15,18 +15,20 @@ class HomeView(View):
     template_name = "home.html"
 
     def get(self, request, *args, **kwargs):
-        if "logout" in request.GET:
+        if "login" in request.path:
+            return render(request, "login.html")
+
+        if "logout" in request.path:
             bonita_manager = BonitaManager(request=request)
             return JsonResponse({
                 "error": bonita_manager.logout(request)
             })
 
-        if session_complete(request):
-            pass
-        else:
-            self.template_name = "login.html"
+        return self.home(request, *args, **kwargs)
 
-        return render(request, self.template_name)
+    @login_required
+    def home(self, request, *args, **kwargs):
+        return render(request, "home.html")
 
     def post(self, request, *args, **kwargs):
         error = True
