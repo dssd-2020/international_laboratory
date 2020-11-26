@@ -21,6 +21,6 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
     path("get-protocols-by-project/", get_protocols_by_project, name="get_protocols_by_project"),
-    path("get-protocol/", get_protocol_to_run, name="get_protocol_to_run"),
+    path("get-protocol-to-run/", get_protocol_to_run, name="get_protocol_to_run"),
     path("start-processing/", start_processing, name="start_processing"),
 ]

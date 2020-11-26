@@ -47,6 +47,7 @@ def get_protocols_by_project(request):
 @permission_classes([IsAuthenticated])
 def get_protocol_to_run(request):
     """
+
     :param request: project, processInstanceId, activityInstanceId
     :return: protocol to JSON
     """
