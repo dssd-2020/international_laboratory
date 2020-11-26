@@ -1,9 +1,18 @@
 /* Botones */
 
 .btn {
-    border-radius: 0;
     cursor: pointer;
     transition: 0.1s all;
+}
+
+.btn:not(.badge-pill) {
+    border-radius: 0;
+}
+
+.badge-disabled {
+    cursor: default !important;
+    color: white !important;
+    background-color: var(--strong-grey) !important;
 }
 
 .btn svg {

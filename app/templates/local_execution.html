@@ -20,11 +20,6 @@
         <div class="col">
             <form id="local-execution-form">
                 {% csrf_token %}
-                <input type="hidden"
-                       id="protocol"
-                       name="protocol"
-                       value="{{ protocol_id }}"
-                >
                 <div class="form-row">
                     <div class="form-group col">
                         <div class="list-group">
@@ -36,8 +31,7 @@
                                 >
                                     {{ activity.name }}
                                     <i id="activity-icon-{{ activity.id }}"
-                                       class="far fa-circle"
-                                       style="float: right; font-size: 1.5rem;"
+                                       class="far fa-circle float-right h4 m-0"
                                     ></i>
                                 </button>
                             {% endfor %}

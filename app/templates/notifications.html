@@ -38,9 +38,45 @@
                             <td>
                                 <div class="card my-2">
                                     <div class="card-body">
-                                        <p class="card-title m-0 ">
-                                            {{ notification.message }}
-                                        </p>
+                                        <form id="notification-form-{{ notification.id }}">
+                                            {% csrf_token %}
+                                            <div class="row justify-content-center">
+                                                <div class="col">
+                                                    <p class="card-title m-0 ">
+                                                        {% comment %}{{ notification.message }}{% endcomment %}
+                                                        {% with pp=notification.protocol_project %}
+                                                            El protocolo
+                                                            <span class="province-font-medium">{{ pp.protocol.name }}</span>
+                                                            del proyecto
+                                                            <span class="province-font-medium">{{ pp.project.name }}</span>
+                                                            {% if pp.approved %}
+                                                                finalizó
+                                                                <span class="province-font-medium">exitosamente</span>
+                                                            {% else %}
+                                                                ha <span class="province-font-medium">fallado</span>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    </p>
+                                                </div>
+                                                <div class="col-3 text-center align-self-center"
+                                                     id="notification-action-{{ notification.id }}"
+                                                >
+                                                    {% if notification.protocol_project.responsible == request.session.user_logged.user_id %}
+                                                        <span class="btn btn-block badge badge-pill bg-success text-white"
+                                                              onclick="readNotification({{ notification.id }}, '{% url "notificaciones" %}')"
+                                                        >
+                                                                Marcar como leída
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="btn btn-block badge badge-pill bg-warning text-white"
+                                                              onclick="readNotification({{ notification.id }}, '{% url "resolucion_falla"  protocol_project=notification.protocol_project.id %}')"
+                                                        >
+                                                            Resolución ante falla
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </td>
@@ -77,9 +113,25 @@
                             <td>
                                 <div class="card my-2">
                                     <div class="card-body">
-                                        <p class="card-title m-0 ">
-                                            {{ notification.message }}
-                                        </p>
+                                        <div class="row justify-content-center">
+                                            <div class="col">
+                                                <p class="card-title m-0 ">
+                                                    {% comment %}{{ notification.message }}{% endcomment %}
+                                                    {% with pp=notification.protocol_project %}
+                                                        El protocolo
+                                                        <span class="province-font-medium">{{ pp.protocol.name }}</span>
+                                                        del proyecto
+                                                        <span class="province-font-medium">{{ pp.project.name }}</span>
+                                                        {% if pp.approved %}
+                                                            finalizó
+                                                            <span class="province-font-medium">exitosamente</span>
+                                                        {% else %}
+                                                            ha <span class="province-font-medium">fallado</span>
+                                                        {% endif %}
+                                                    {% endwith %}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </td>

@@ -187,12 +187,11 @@ class LocalExecutionView(View):
     template_name = "local_execution.html"
 
     def get(self, request, *args, **kwargs):
-        if session_complete(request):
-            protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
-            protocol = Protocol.objects.get(pk=protocol_project.protocol.id)
+        if session_complete(request) and "protocol_project" in kwargs:
+            protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
+            protocol = protocol_project.protocol
             activities = protocol.activities.all()
             ctx = {
-                "protocol_id": protocol.id,
                 "activities": activities,
             }
             bonita_manager = BonitaManager(request=request)
@@ -209,8 +208,9 @@ class LocalExecutionView(View):
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
-            if "protocol" in request.POST:
-                protocol = Protocol.objects.get(pk=request.POST.get("protocol"))
+            if "protocol_project" in kwargs:
+                protocol_project = ProtocolProject.objects.get(pk=kwargs["protocol_project"])
+                protocol = protocol_project.protocol
                 activities = protocol.activities.all()
                 try:
                     activities_checked = 0
@@ -220,15 +220,15 @@ class LocalExecutionView(View):
                                 protocol=protocol,
                                 activity=activity
                             )
-                            activities_checked += 1
-                            activity_protocol.approved = request.POST.get("activities[{}]".format(activity.id))
+                            activity_protocol.approved = True
                             activity_protocol.save()
-                    error = False
+                            activities_checked += 1
                     bonita_manager = BonitaManager(request)
                     protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
                     running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
                     bonita_manager.update_task_state(request, running_activity, "completed")
                     bonita_manager.set_protocol_result(request, get_result_by_protocol(protocol, activities_checked))
+                    error = False
                 except ():
                     pass
         return JsonResponse({
@@ -240,13 +240,11 @@ class FailureResolutionView(View):
     template_name = "failure_resolution.html"
 
     def get(self, request, *args, **kwargs):
-        if session_complete(request):
-            # (Alejo): El id es uno de un protocolo que tenía cargado en mi local y usé para probar, si se cargan algun protocolo usen ese id hasta que se vincule con Bonita
-            protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
-            protocol = Protocol.objects.get(pk=protocol_project.protocol.id)
-            protocol_id = protocol.id
+        if session_complete(request) and "protocol_project" in kwargs:
+            protocol_project_id = kwargs["protocol_project"]
+            protocol_project = ProtocolProject.objects.get(pk=protocol_project_id)
             ctx = {
-                "protocol_id": protocol_id,
+                "protocol_project_id": protocol_project_id,
             }
             bonita_manager = BonitaManager(request=request)
             running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
@@ -263,23 +261,25 @@ class FailureResolutionView(View):
     def post(self, request, *args, **kwargs):
         error = True
         if session_complete(request):
-            if "protocol" in request.POST and "resolution" in request.POST:
-                protocol = Protocol.objects.get(pk=request.POST.get("protocol"))
+            if "protocol_project" in kwargs and "resolution" in request.POST:
+                protocol_project_id = kwargs["protocol_project"]
+                protocol_project = ProtocolProject.objects.get(pk=protocol_project_id)
+                resolution_case = int(request.POST.get("resolution"))
                 resolution = {
                     1: "continue",
                     2: "restart_protocol",
                     3: "restart_project",
                     4: "cancel_project"
-                }.get(int(request.POST.get("resolution")), "error")
-                try:
-                    error = False
-                    bonita_manager = BonitaManager(request)
-                    protocol_project = ProtocolProject.objects.get(pk=request.GET.get("protocol_project"))
-                    running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
-                    bonita_manager.update_task_state(request, running_activity, "completed")
-                    bonita_manager.set_resolution_failure(request, request.POST.get("resolution"))
-                except ():
-                    pass
+                }.get(resolution_case, False)
+                if resolution:
+                    try:
+                        bonita_manager = BonitaManager(request)
+                        running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
+                        bonita_manager.update_task_state(request, running_activity, "completed")
+                        bonita_manager.set_resolution_failure(request, resolution_case)
+                        error = False
+                    except ():
+                        pass
         return JsonResponse({
             "error": error
         })
@@ -303,3 +303,17 @@ class NotificationsView(View):
             }
             return render(request, self.template_name, ctx)
         return redirect("home")
+
+    def post(self, request, *args, **kwargs):
+        error = True
+        if "notification_id" in request.POST:
+            try:
+                notification = Notification.objects.get(pk=request.POST.get("notification_id"))
+                notification.view = True
+                notification.save()
+                error = False
+            except ():
+                pass
+        return JsonResponse({
+            "error": error
+        })
