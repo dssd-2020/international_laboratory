@@ -195,7 +195,7 @@ class BonitaManager:
         # Esto es para ver todas las variables que tiene el caso, con el tipo de cada una
         # url = "".join([self.uri, "/API/bpm/caseVariable?p=0&c=100&f=case_id%3d", self.get_case(request)])
         # response = requests.get(url, cookies=request.session["bonita_cookies"])
-        url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/var_active_project"])
+        url = "".join([self.uri, "/API/bpm/caseVariable/", project.case_id, "/var_active_project"])
 
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
@@ -210,12 +210,12 @@ class BonitaManager:
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
 
-    def set_protocol_result(self, request, result):
-        # Esto es para ver todas las variables que tiene el caso, con el tipo de cada una
-        # url = "".join([self.uri, "/API/bpm/caseVariable?p=0&c=100&f=case_id%3d", self.get_case(request)])
-        # response = requests.get(url, cookies=request.session["bonita_cookies"])
-        # print(response.content)
+        # VER EL VALOR DE LA VARIABLE ACTUALIZADA
+        url = "".join([self.uri, "/API/bpm/caseVariable/", project.case_id, "/var_active_project"])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        print(response.content)
 
+    def set_protocol_result(self, request, result):
         url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/protocol_result"])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
@@ -235,15 +235,12 @@ class BonitaManager:
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         print(response.content)
 
-
     def set_resolution_failure(self, request, result):
-        
         url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/resolution_failure_var"])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
             "Content-type": "application/json"
         }
-        
         data = {
             "type": "java.lang.String",
             "value": result

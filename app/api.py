@@ -20,6 +20,7 @@ def get_protocols_by_project(request):
     data = request.data
     logging.info('Se pidieron los protocolos para el projecto %s', data['project'])
     try:
+        #ACA deberiamos setear los resultados y aprobados todos en null, porque podria volver a empezar todo
         protocol_projects = ProtocolProject.objects.filter(project=data['project'], project__active=True).order_by("protocol__order")
         protocols_list = {}
         if len(protocol_projects) > 0:
@@ -38,6 +39,36 @@ def get_protocols_by_project(request):
     except ProtocolProject.DoesNotExist:
         logging.debug('El proyecto no existe o no está activo.')
         return JsonResponse({'error': 'El proyecto no existe o no está activo', 'status': status.HTTP_400_BAD_REQUEST})
+    except Exception as e:
+        logging.debug('Excepcion: %s', str(e))
+        return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_protocol_to_run(request):
+    """
+    :param request: user, protocol, project
+    :return: message, state
+    """
+    data = request.data
+    logging.info('Se solicitó la información proyecto %s en el caso %s', data['project'], data['processInstanceId'])
+    try:
+        protocol_project = ProtocolProject.objects.filter(project=data['project'], result__isnull=True, approved__isnull=True).order_by("protocol__order").first()
+        if protocol_project:
+            protocol_project.running_task = str(data['activityInstanceId'])
+            return JsonResponse({"id": str(protocol_project.id),
+                                "responsible": protocol_project.responsible,
+                                "order": protocol_project.protocol.order,
+                                "is_local": protocol_project.protocol.is_local,
+                                "last": "true"
+                               })
+        # Setear la variable last en true si es el ultimo.
+        else:
+            logging.debug('Los protocolos ya han sido todos procesados.')
+            return JsonResponse({'error': 'Los protocolos ya han sido todos procesados.', 'status': status.HTTP_400_BAD_REQUEST})
+    except ProtocolProject.DoesNotExist:
+        logging.debug('Otro error que todavia no se.')
+        return JsonResponse({'error': 'Otro error que todavia no se', 'status': status.HTTP_400_BAD_REQUEST})
     except Exception as e:
         logging.debug('Excepcion: %s', str(e))
         return JsonResponse({'error': str(e), 'status': status.HTTP_400_BAD_REQUEST})
