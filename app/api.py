@@ -58,7 +58,9 @@ def get_protocol_to_run(request):
             protocol_project.running_task = str(data['activityInstanceId'])
             return JsonResponse({"id": str(protocol_project.id),
                                 "responsible": protocol_project.responsible,
-                                "is_local": protocol_project.protocol.is_local
+                                "is_local": protocol_project.protocol.is_local,
+                                "protocol": str(protocol_project.protocol.id),
+                                "name": protocol_project.protocol.name
                                })
             logging.info('Se envió a procesar el protocolo %s', protocol_project.id)
         else:
@@ -113,19 +115,22 @@ def get_result_by_protocol(protocol_project, activities_checked):
     logging.info('El resultado del protocolo fue %s', "aprobado" if approved else "desaprobado")
     return approved
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def set_result_remote_protocol(request):
+def set_result_remote_protocol(request, pk):
     """
-    :param request: protocol_project, approved
+    :param request: approved, points
     :return: message, state
     """
     data = request.data
-
     try:
-        protocol_project = ProtocolProject.objects.get(pk=request.data["protocol_project"])
+        protocol_project = ProtocolProject.objects.get(pk=pk)
         if protocol_project:
-            protocol_project.approved = request.data['approved']
+            if data["approved"] == "true":
+                protocol_project.approved = True
+            else:
+                protocol_project.approved = False
+            protocol_project.result = data["points"]
             protocol_project.save()
             return JsonResponse(
                 {'message': "El protocolo fue actualizado", 'status': status.HTTP_200_OK})
