@@ -101,10 +101,12 @@ class Notification(models.Model):
     view = models.BooleanField(_("Leída"), default=False)
     project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.CASCADE)
     protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", blank=True, null=True, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(_("Última modificación"), auto_now=True)
 
     class Meta:
         verbose_name = _("Notificación")
         verbose_name_plural = _("Notificaciones")
+        ordering = ["-updated_at", "-id"]
 
     def __unicode__(self):
         return u"Notificación para %s" % self.user_id
