@@ -1,10 +1,11 @@
+import logging
+
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from .models import ProtocolProject, Project
-import logging
+from .models import ProtocolProject, Project, Notification
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
@@ -117,8 +118,10 @@ def get_result_by_protocol(protocol_project, activities_checked):
     approved = protocol_project.protocol.points <= points
     if approved:
         protocol_project.approved = True
-
     protocol_project.save()
+    notify(protocol_project.responsible, protocol_project.project, protocol_project.protocol)
+    if not approved:
+        notify(protocol_project.project.project_manager, protocol_project.project, protocol_project.protocol)
     logging.info('El resultado del protocolo fue %s', "aprobado" if approved else "desaprobado")
     return approved
 
@@ -134,12 +137,13 @@ def set_result_remote_protocol(request, pk):
     try:
         protocol_project = ProtocolProject.objects.get(pk=pk)
         if protocol_project:
-            if data["approved"] == "true":
-                protocol_project.approved = True
-            else:
-                protocol_project.approved = False
+            approved = data["approved"] == "true"
+            protocol_project.approved = approved
             protocol_project.result = data["points"]
             protocol_project.save()
+            notify(protocol_project.responsible, protocol_project.project, protocol_project.protocol)
+            if not approved:
+                notify(protocol_project.project.project_manager, protocol_project.project, protocol_project.protocol)
             return JsonResponse(
                 {'message': "El protocolo fue actualizado", 'status': status.HTTP_200_OK})
     except ProtocolProject.DoesNotExist:
@@ -163,6 +167,7 @@ def set_result_project(request, pk):
         if project:
             project.approved = get_result_by_project(project)
             project.save()
+            notify(project.project_manager, project)
             return JsonResponse(
                 {'message': "El resultado del proyecto fue actualizado", 'status': status.HTTP_200_OK})
     except Project.DoesNotExist:
@@ -187,3 +192,11 @@ def get_result_by_project(project):
 
     logging.info('El resultado del protocolo fue %s', "aprobado" if approved else "desaprobado")
     return approved
+
+
+def notify(user_id, project, protocol=None):
+    Notification.objects.create(
+        user_id=user_id,
+        project=project,
+        protocol=protocol
+    )
