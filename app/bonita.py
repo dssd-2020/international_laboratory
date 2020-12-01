@@ -137,14 +137,11 @@ class BonitaManager:
         return json.loads(response.content)[0]["id"]
 
     def get_activities_by_case(self, request, case_id):
-        if request.GET.get("id"):
-            return request.GET.get("id")
-        else:
-            url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", case_id])
-            response = requests.get(url, cookies=request.session["bonita_cookies"])
-            if response.status_code != 200:
-                raise Exception("HTTP STATUS: " + str(response))
-            return json.loads(response.content)[0]["id"]
+        url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", case_id])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+        return json.loads(response.content)[0]["id"]
 
     def check_task_assignment(self, request, activity):
         url = "".join([self.uri, "/API/bpm/activity/", activity])
@@ -267,3 +264,10 @@ class BonitaManager:
         except:
             roles = {}
         return set(roles)
+
+    def get_task_running(self, request, case_id):
+        url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", case_id])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+        return json.loads(response.content)[0]["displayName"]
