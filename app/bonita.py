@@ -98,8 +98,8 @@ class BonitaManager:
             raise Exception("HTTP STATUS: " + str(response))
         return json.loads(response.content)
 
-    def get_users_protocol_responsible(self, request):
-        group_id = self.get_group_by_name(request, "Responsable de protocolo")
+    def get_users_by_role(self, request, name):
+        group_id = self.get_group_by_name(request, name)
         url = "".join(
             [self.uri, "/API/identity/user?p=0&c=100&o=firstname%20ASC&f=enabled%3dtrue&f=group_id=", group_id])
         response = requests.get(url, cookies=request.session["bonita_cookies"])

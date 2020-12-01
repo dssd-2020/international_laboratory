@@ -131,7 +131,7 @@ class ProjectView(View):
     def get(self, request, *args, **kwargs):
         bonita_manager = BonitaManager(request=request)
         user_logged = bonita_manager.get_user_logged(request)
-        users_protocol_responsible = bonita_manager.get_users_protocol_responsible(request)
+        users_protocol_responsible = bonita_manager.get_users_by_role(request, "Responsable de protocolo")
         ctx = {
             "project_manager": {
                 "id": user_logged["user_id"],
