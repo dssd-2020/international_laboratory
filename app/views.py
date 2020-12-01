@@ -7,10 +7,6 @@ from .decorators import login_required
 from .models import *
 
 
-def session_complete(request):
-    return "user_logged" in request.session and "bonita_cookies" in request.session
-
-
 class HomeView(View):
     template_name = "home.html"
 
