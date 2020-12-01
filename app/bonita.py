@@ -2,7 +2,6 @@ import json
 import requests
 import logging
 
-
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
@@ -254,3 +253,17 @@ class BonitaManager:
         # url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/resolution_failure_var"])
         # response = requests.get(url, cookies=request.session["bonita_cookies"])
         # print(response.content)
+
+    def get_membership_by_user(self, request):
+        url = "".join(
+            [self.uri, "/API/identity/membership?p=0&c=100&f=user_id=", request.session["user_logged"]['user_id'],
+             "&d=role_id"])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+        try:
+            roles = [role['role_id']['displayName'] for role in json.loads(response.content)]
+        except:
+            roles = {}
+        return set(roles)
