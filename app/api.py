@@ -169,7 +169,7 @@ def set_result_project(request, pk):
             project.save()
             notify(project.project_manager, project)
             return JsonResponse(
-                {'message': "El resultado del proyecto fue actualizado", 'status': status.HTTP_200_OK})
+                {'message': "El resultado del proyecto fue actualizado", 'approved': project.approved, 'status': status.HTTP_200_OK})
     except Project.DoesNotExist:
         logging.debug('El proyecto no existe.')
         return JsonResponse({'error': 'El proyecto no existe.', 'status': status.HTTP_400_BAD_REQUEST})
