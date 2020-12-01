@@ -43,25 +43,33 @@
                                             <div class="row justify-content-center">
                                                 <div class="col">
                                                     <p class="card-title m-0 ">
-                                                        {% comment %}{{ notification.message }}{% endcomment %}
-                                                        {% with pp=notification.protocol_project %}
+                                                        {% if notification.protocol_project %}
                                                             El protocolo
-                                                            <span class="province-font-medium">{{ pp.protocol.name }}</span>
+                                                            <span class="province-font-medium">{{ notification.protocol.name }}</span>
                                                             del proyecto
-                                                            <span class="province-font-medium">{{ pp.project.name }}</span>
-                                                            {% if pp.approved %}
+                                                            <span class="province-font-medium">{{ notification.project.name }}</span>
+                                                            {% if notification.protocol_project.approved %}
                                                                 finalizó
                                                                 <span class="province-font-medium">exitosamente</span>
                                                             {% else %}
                                                                 ha <span class="province-font-medium">fallado</span>
                                                             {% endif %}
-                                                        {% endwith %}
+                                                        {% else %}
+                                                            El proyecto
+                                                            <span class="province-font-medium">{{ notification.project.name }}</span>
+                                                            finalizó y
+                                                            {% if notification.project.approved %}
+                                                                <span class="province-font-medium">ha sido aprobado</span>
+                                                            {% else %}
+                                                                <span class="province-font-medium">no ha sido aprobado</span>
+                                                            {% endif %}
+                                                        {% endif %}
                                                     </p>
                                                 </div>
                                                 <div class="col-3 text-center align-self-center"
                                                      id="notification-action-{{ notification.id }}"
                                                 >
-                                                    {% if notification.protocol_project.responsible == request.session.user_logged.user_id %}
+                                                    {% if not notification.protocol_project or notification.protocol_project.responsible == request.session.user_logged.user_id %}
                                                         <span class="btn btn-block badge badge-pill bg-success text-white"
                                                               onclick="readNotification({{ notification.id }}, '{% url "notificaciones" %}')"
                                                         >
@@ -116,19 +124,27 @@
                                         <div class="row justify-content-center">
                                             <div class="col">
                                                 <p class="card-title m-0 ">
-                                                    {% comment %}{{ notification.message }}{% endcomment %}
-                                                    {% with pp=notification.protocol_project %}
-                                                        El protocolo
-                                                        <span class="province-font-medium">{{ pp.protocol.name }}</span>
-                                                        del proyecto
-                                                        <span class="province-font-medium">{{ pp.project.name }}</span>
-                                                        {% if pp.approved %}
-                                                            finalizó
-                                                            <span class="province-font-medium">exitosamente</span>
+                                                        {% if notification.protocol_project %}
+                                                            El protocolo
+                                                            <span class="province-font-medium">{{ notification.protocol.name }}</span>
+                                                            del proyecto
+                                                            <span class="province-font-medium">{{ notification.project.name }}</span>
+                                                            {% if notification.protocol_project.approved %}
+                                                                finalizó
+                                                                <span class="province-font-medium">exitosamente</span>
+                                                            {% else %}
+                                                                ha <span class="province-font-medium">fallado</span>
+                                                            {% endif %}
                                                         {% else %}
-                                                            ha <span class="province-font-medium">fallado</span>
+                                                            El proyecto
+                                                            <span class="province-font-medium">{{ notification.project.name }}</span>
+                                                            finalizó y
+                                                            {% if notification.project.approved %}
+                                                                <span class="province-font-medium">ha sido aprobado</span>
+                                                            {% else %}
+                                                                <span class="province-font-medium">no ha sido aprobado</span>
+                                                            {% endif %}
                                                         {% endif %}
-                                                    {% endwith %}
                                                 </p>
                                             </div>
                                         </div>

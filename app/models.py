@@ -97,17 +97,24 @@ class ProtocolProject(models.Model):
 
 
 class Notification(models.Model):
-    message = models.TextField(_("Mensaje"))
     user_id = models.CharField(_("Destinatario"), max_length=3)
     view = models.BooleanField(_("Leída"), default=False)
-    protocol_project = models.ForeignKey(ProtocolProject, verbose_name="Protocolo", on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.CASCADE)
+    protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = _("Notificación")
         verbose_name_plural = _("Notificaciones")
 
     def __unicode__(self):
-        return u"%s" % self.message
+        return u"Notificación para %s" % self.user_id
 
     def __str__(self):
-        return self.message
+        return "Notificación para {}".format(self.user_id)
+
+    @property
+    def protocol_project(self):
+        try:
+            return ProtocolProject.objects.get(project=self.project, protocol=self.protocol)
+        except ProtocolProject.DoesNotExist:
+            return None

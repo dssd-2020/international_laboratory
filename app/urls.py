@@ -1,7 +1,6 @@
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .api import get_protocols_by_project
 from .views import *
 
 urlpatterns = [
@@ -18,6 +17,7 @@ urlpatterns = [
     path("ejecucion_local/<int:protocol_project>/", LocalExecutionView.as_view(), name="ejecucion_local"),
     path("resolucion_falla/<int:protocol_project>/", FailureResolutionView.as_view(), name="resolucion_falla"),
     path("notificaciones/", NotificationsView.as_view(), name="notificaciones"),
+    path("consultas/", InquiriesView.as_view(), name="consultas"),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
     path("get-protocols-by-project/", get_protocols_by_project, name="get_protocols_by_project"),
