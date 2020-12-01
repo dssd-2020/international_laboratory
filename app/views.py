@@ -25,9 +25,16 @@ class HomeView(View):
 
     @login_required
     def home(self, request, *args, **kwargs):
+        bonita_manager = BonitaManager(request=request)
+        user_membership = bonita_manager.get_membership_by_user(request)
         ctx = {
-            "managed_projects": Project.objects.filter(project_manager=request.session["user_logged"]["user_id"])
+            "user_membership": user_membership,
         }
+        user_logged_id = request.session["user_logged"]["user_id"]
+        if "Jefe de proyecto" in user_membership:
+            ctx["managed_projects"] = Project.objects.filter(project_manager=user_logged_id)
+        if "Responsable de protocolo" in user_membership:
+            ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
         return render(request, "home.html", ctx)
 
     @login_required
@@ -57,16 +64,22 @@ class HomeView(View):
 class ActivityView(View):
     @login_required
     def get(self, request, *args, **kwargs):
+        bonita_manager = BonitaManager(request=request)
+        user_membership = bonita_manager.get_membership_by_user(request)
+        ctx = {
+            "user_membership": user_membership,
+        }
         if "actividades" in request.path:
             activities = Activity.objects.all()
             if "s" in kwargs:
                 activities = activities.filter(pk=kwargs["s"])
-            ctx = {
-                "activities": activities
-            }
+            ctx["activities"] = activities
             return render(request, "activities_list.html", ctx)
         else:
-            return render(request, "create_activity.html")
+            if "Jefe de proyecto" in user_membership:
+                return render(request, "create_activity.html")
+            else:
+                return redirect("actividades")
 
     @login_required
     def post(self, request, *args, **kwargs):
@@ -87,7 +100,11 @@ class ActivityView(View):
 class ProtocolView(View):
     @login_required
     def get(self, request, *args, **kwargs):
-        ctx = {}
+        bonita_manager = BonitaManager(request=request)
+        user_membership = bonita_manager.get_membership_by_user(request)
+        ctx = {
+            "user_membership": user_membership,
+        }
         if "protocolos" in request.path:
             protocols = Protocol.objects.all()
             if "s" in kwargs:
@@ -95,8 +112,11 @@ class ProtocolView(View):
             ctx["protocols"] = protocols
             return render(request, "protocols_list.html", ctx)
         else:
-            ctx["activities"] = Activity.objects.all()
-            return render(request, "create_protocol.html", ctx)
+            if "Jefe de proyecto" in user_membership:
+                ctx["activities"] = Activity.objects.all()
+                return render(request, "create_protocol.html", ctx)
+            else:
+                return redirect("protocolos")
 
     @login_required
     def post(self, request, *args, **kwargs):
