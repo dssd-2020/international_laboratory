@@ -23,4 +23,5 @@ urlpatterns = [
     path("get-protocols-by-project/", get_protocols_by_project, name="get_protocols_by_project"),
     path("get-protocol-to-run/", get_protocol_to_run, name="get_protocol_to_run"),
     path("start-processing/", start_processing, name="start_processing"),
+    path("set-result-remote-protocol/<int:pk>", set_result_remote_protocol, name="set_result_remote_protocol")
 ]
