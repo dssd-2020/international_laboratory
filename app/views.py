@@ -341,3 +341,30 @@ class NotificationsView(View):
         return JsonResponse({
             "error": error
         })
+
+
+class InquiriesView(View):
+    template_name = "inquiries.html"
+
+    @login_required
+    def get(self, request, *args, **kwargs):
+        bonita_manager = BonitaManager(request=request)
+        if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
+            return redirect("home")
+        ctx = {}
+        return render(request, self.template_name, ctx)
+
+    @login_required
+    def post(self, request, *args, **kwargs):
+        error = True
+        if "notification_id" in request.POST:
+            try:
+                notification = Notification.objects.get(pk=request.POST.get("notification_id"))
+                notification.view = True
+                notification.save()
+                error = False
+            except ():
+                pass
+        return JsonResponse({
+            "error": error
+        })
