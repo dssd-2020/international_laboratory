@@ -63,6 +63,7 @@ class Project(models.Model):
     protocols = models.ManyToManyField(Protocol, through='ProtocolProject', verbose_name="Protocolos")
     active = models.BooleanField(_("Activo"), default=True)
     case_id = models.CharField(_("Número de caso"), max_length=5)
+    approved = models.BooleanField(_("Aprobado"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Proyecto")
