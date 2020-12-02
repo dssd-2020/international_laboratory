@@ -148,6 +148,18 @@ class ProjectView(View):
     @login_required
     def get(self, request, *args, **kwargs):
         bonita_manager = BonitaManager(request=request)
+
+        if "s" in kwargs:
+            if "Jefe de proyecto" in bonita_manager.get_membership_by_user(request):
+                try:
+                    ctx = {
+                        "project": Project.objects.get(pk=kwargs["s"])
+                    }
+                    return render(request, "project_detail.html", ctx)
+                except Project.DoesNotExist:
+                    pass
+            return redirect("home")
+
         user_logged = bonita_manager.get_user_logged(request)
         users_protocol_responsible = bonita_manager.get_users_by_role(request, "Responsable de protocolo")
         ctx = {

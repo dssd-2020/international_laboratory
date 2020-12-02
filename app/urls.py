@@ -14,6 +14,7 @@ urlpatterns = [
     path("protocolos/", ProtocolView.as_view(), name="protocolos"),
     path("protocolos/<int:s>/", ProtocolView.as_view(), name="protocolos_buscar"),
     path("proyecto/", ProjectView.as_view(), name="proyecto"),
+    path("proyecto/<int:s>/", ProjectView.as_view(), name="proyecto_buscar"),
     path("ejecucion_local/<int:protocol_project>/", LocalExecutionView.as_view(), name="ejecucion_local"),
     path("resolucion_falla/<int:protocol_project>/", FailureResolutionView.as_view(), name="resolucion_falla"),
     path("notificaciones/", NotificationsView.as_view(), name="notificaciones"),
