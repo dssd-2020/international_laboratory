@@ -166,6 +166,7 @@ def set_result_project(request, pk):
         project = Project.objects.get(pk=pk)
         if project:
             project.approved = get_result_by_project(project)
+            project.active = False
             project.save()
             notify(project.project_manager, project)
             return JsonResponse(
