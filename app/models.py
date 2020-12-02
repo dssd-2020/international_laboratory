@@ -68,7 +68,7 @@ class Project(models.Model):
     class Meta:
         verbose_name = _("Proyecto")
         verbose_name_plural = _("Proyectos")
-        ordering = ["-id"]
+        ordering = ["approved", "-id"]
 
     def __unicode__(self):
         return u"%s" % self.name
