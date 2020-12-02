@@ -281,4 +281,6 @@ class BonitaManager:
             response = requests.get(url, cookies=request.session["bonita_cookies"])
             if response.status_code != 200:
                 raise Exception("HTTP STATUS: " + str(response))
+            # print("averrrrr")
+            print(json.loads(response.content))
             return json.loads(response.content)
