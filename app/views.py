@@ -28,6 +28,8 @@ class HomeView(View):
         }
         user_logged_id = request.session["user_logged"]["user_id"]
         if "Jefe de proyecto" in user_membership:
+            # bonita_manager.get_task_running(request, project.case_id)
+            # si el proyecto esta ejecutando una tarea, devuelve el nombre de esa tarea
             ctx["managed_projects"] = Project.objects.filter(project_manager=user_logged_id)
         if "Responsable de protocolo" in user_membership:
             ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
