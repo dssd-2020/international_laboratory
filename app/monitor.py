@@ -1,10 +1,9 @@
-import logging
-import requests
 import json
-import pytz
+import logging
 from datetime import timedelta, datetime
 
-from .bonita import BonitaManager
+import requests
+
 from .models import Project
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')

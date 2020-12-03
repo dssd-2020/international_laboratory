@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    {% if "Jefe de proyecto" in request.session.user_membership %}
+    {% if "Jefe de proyecto" in request.session.user_logged.user_membership %}
         <div class="row justify-content-end mb-5">
             <div class="col-4">
                 <a href="{% url "proyecto" %}"
@@ -21,7 +21,7 @@
         </div>
     {% endif %}
 
-    {% if "Jefe de proyecto" in request.session.user_membership %}
+    {% if "Jefe de proyecto" in request.session.user_logged.user_membership %}
         <div class="row mb-5">
             <div class="col">
                 <h5 class="primary-blue province-font-medium">
@@ -53,7 +53,7 @@
         </div>
     {% endif %}
 
-    {% if "Responsable de protocolo" in request.session.user_membership %}
+    {% if "Responsable de protocolo" in request.session.user_logged.user_membership %}
         <div class="row mb-5">
             <div class="col">
                 <h5 class="primary-blue province-font-medium">

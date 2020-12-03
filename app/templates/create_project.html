@@ -106,7 +106,7 @@
                         >
                             <option value="" selected disabled>Seleccionar</option>
                             {% for user in users %}
-                                <option value="{{ user.id }}">{{ user.firstname }}</option>
+                                <option value="{{ user.id }}">{{ user.firstname }} {{ user.lastname }}</option>
                             {% endfor %}
                         </select>
                     </div>

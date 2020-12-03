@@ -27,17 +27,14 @@ class HomeView(View):
         ctx = {}
         user_logged_id = request.session["user_logged"]["user_id"]
         bonita_manager = BonitaManager(request)
-        if "Jefe de proyecto" in request.session["user_membership"]:
-            # rpta = bonita_manager.get_task_running(request, project.case_id)
-            # print(rpta)
-            # devuelve un json con name y state
+        if "Jefe de proyecto" in request.session["user_logged"]["user_membership"]:
             managed_projects = Project.objects.filter(project_manager=user_logged_id)
             ctx["task_running"] = {}
             for project in managed_projects:
                 ctx["task_running"][project.case_id] = bonita_manager.get_task_running(request, project.case_id)
             ctx["managed_projects_in_execution"] = managed_projects.filter(approved__isnull=True)
             ctx["managed_projects"] = managed_projects.filter(approved__isnull=False)
-        if "Responsable de protocolo" in request.session["user_membership"]:
+        if "Responsable de protocolo" in request.session["user_logged"]["user_membership"]:
             ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
         return render(request, "home.html", ctx)
 
@@ -77,7 +74,7 @@ class ActivityView(View):
             }
             return render(request, "activities_list.html", ctx)
         else:
-            if "Jefe de proyecto" in request.session["user_membership"]:
+            if "Jefe de proyecto" in request.session["user_logged"]["user_membership"]:
                 return render(request, "create_activity.html")
             else:
                 return redirect("actividades")
@@ -109,7 +106,7 @@ class ProtocolView(View):
             ctx["protocols"] = protocols
             return render(request, "protocols_list.html", ctx)
         else:
-            if "Jefe de proyecto" in request.session["user_membership"]:
+            if "Jefe de proyecto" in request.session["user_logged"]["user_membership"]:
                 ctx["activities"] = Activity.objects.all()
                 return render(request, "create_protocol.html", ctx)
             else:
@@ -159,12 +156,11 @@ class ProjectView(View):
                     pass
             return redirect("home")
 
-        user_logged = bonita_manager.get_user_logged(request)
         users_protocol_responsible = bonita_manager.get_users_by_role(request, "Responsable de protocolo")
         ctx = {
             "project_manager": {
-                "id": user_logged["user_id"],
-                "name": user_logged["user_name"]
+                "id": request.session["user_logged"]["user_id"],
+                "name": "{} {}".format(request.session["user_logged"]["firstname"], request.session["user_logged"]["lastname"])
             },
             "users": users_protocol_responsible,
             "protocols": Protocol.objects.all(),
@@ -371,7 +367,7 @@ class InquiriesView(View):
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
-        
+
         # Inquirie_1 Jefes de proyecto con mayor cantidad de proyectos en espera de toma de decisión ante falla
         ctx["inquirie_1"] = get_on_failure(bonita_manager, request)
 
