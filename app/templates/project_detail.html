@@ -37,7 +37,7 @@
                                     </div>
                                     <div class="col-3 text-center align-self-center">
                                         {% for protocol_project_id, data in state_protocols.items %}
-                                            {% if protocol_project_id == protocol_project.id %}
+                                            {% if protocol_project_id == protocolproject.id %}
                                                 {% if data.state %}
                                                     {% if data.state == "Protocolo aprobado" %}
                                                         <span class="btn btn-block badge badge-pill bg-success text-white">Aprobado</span>
