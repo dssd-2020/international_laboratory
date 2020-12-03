@@ -23,10 +23,14 @@
                         {% else %}
                             {% for case_id, data in task_running.items %}
                                 {% if case_id == project.case_id %}
-                                    {% if data.state == "failed" %}
-                                        <span class="btn btn-block badge badge-pill bg-danger text-white">Ejecución fallida</span>
+                                    {% if data.state %}
+                                        {% if data.state == "failed" %}
+                                            <span class="btn btn-block badge badge-pill bg-danger text-white">Ejecución fallida</span>
+                                        {% else %}
+                                            <span class="btn btn-block badge badge-pill bg-dark text-white">Proyecto en ejecución</span>
+                                        {% endif %}
                                     {% else %}
-                                        <span class="btn btn-block badge badge-pill bg-dark text-white">Proyecto en ejecución</span>
+                                        <span class="btn btn-block badge badge-pill bg-secondary text-white">No hay información</span>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}

@@ -39,8 +39,6 @@ class HomeView(View):
             ctx["state_protocols"] = {}
             for protocol_project in responsible_protocols:
                 ctx["state_protocols"][protocol_project.id] = self.state_protocol_project(request, protocol_project)
-            print("state protocols: ")
-            print(ctx["state_protocols"])
             ctx["responsible_protocols"] = responsible_protocols
         return render(request, "home.html", ctx)
 
