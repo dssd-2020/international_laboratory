@@ -306,3 +306,13 @@ class BonitaManager:
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
         logging.debug(response.content)
+
+    def get_case_variable(self, request, case_id, var):
+        # VER EL VALOR DE LA VARIABLE ACTUALIZADA
+        url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/", var])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        # {"case_id":"13007","name":"protocol_to_run","description":"","type":"java.lang.String","value":"4"}
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+        
+        return json.loads(response.content)["value"]

@@ -33,7 +33,13 @@ class HomeView(View):
             ctx["managed_projects_in_execution"] = managed_projects.filter(approved__isnull=True)
             ctx["managed_projects"] = managed_projects.filter(approved__isnull=False)
         if "Responsable de protocolo" in request.session["user_membership"]:
-            ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
+            protocols_project = ProtocolProject.objects.filter(responsible=user_logged_id)
+            
+            for protocol_project in protocols_project:
+                state = self.state_protocol_project(request, protocol_project=protocol_project)
+                print("state...")
+                print(state)
+            ctx["responsible_protocols"] = protocols_project
         return render(request, "home.html", ctx)
 
     @login_required
@@ -58,6 +64,29 @@ class HomeView(View):
         return JsonResponse({
             "error": error
         })
+
+    def protocol_project_run(self, request, case_id):
+        bonita_manager = BonitaManager(request=request)
+        protocol_project = bonita_manager.get_case_variable(request, case_id, "protocol_project")
+        return protocol_project
+
+    def state_protocol_project(self, request, protocol_project):
+        if protocol_project.result and protocol_project.approved:
+            result = {"state": "Protocolo aprobado"}
+            return result
+        elif protocol_project.result and not protocol_project.approved:
+            result = {"state": "En resolución ante falla"}
+            return result
+        elif protocol_project.project.active:
+            protocol_project_run = self.protocol_project_run(request, protocol_project.project.case_id)
+            if protocol_project_run:
+                if int(protocol_project_run) == int(protocol_project.id):
+                    # bonita_manager.get_task_running(request, project.case_id)
+                    result = {"state": "Protocolo listo para ejecutarse"}
+                    return result
+            elif not protocol_project.running_task:
+                result = {"state": "El protocolo se encuentra en preparación"}
+                return result
 
 
 class ActivityView(View):

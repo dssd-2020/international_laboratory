@@ -59,6 +59,7 @@ def get_protocol_to_run(request):
                                                           approved__isnull=True).order_by("protocol__order").first()
         if protocol_project:
             protocol_project.running_task = str(data['activityInstanceId'])
+            protocol_project.save()
             return JsonResponse({"id": str(protocol_project.id),
                                  "responsible": protocol_project.responsible,
                                  "is_local": protocol_project.protocol.is_local,
