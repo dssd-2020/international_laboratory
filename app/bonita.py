@@ -37,6 +37,7 @@ class BonitaManager:
             logging.info('El usuario %s ha iniciado sesión', request.session["user_logged"]['user_name'])
             request.session["username"] = username
             request.session["password"] = password
+            request.session["user_membership"] = self.get_membership_by_user(request)
         else:
             return False
         return response
@@ -260,9 +261,9 @@ class BonitaManager:
             raise Exception("HTTP STATUS: " + str(response))
         try:
             roles = [role['role_id']['displayName'] for role in json.loads(response.content)]
-        except:
+        except ():
             roles = {}
-        return set(roles)
+        return list(set(roles))
 
     def get_task_running(self, request, case_id):
         url = "".join([self.uri, "/API/bpm/activity?f=processId=", self.process_id, "&f=parentCaseId=", case_id])
