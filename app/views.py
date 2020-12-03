@@ -224,6 +224,7 @@ class LocalExecutionView(View):
         protocol = protocol_project.protocol
         activities = protocol.activities.all()
         ctx = {
+            "protocol_project": protocol_project,
             "activities": activities,
         }
         bonita_manager = BonitaManager(request=request)
@@ -275,7 +276,7 @@ class FailureResolutionView(View):
         protocol_project_id = kwargs["protocol_project"]
         protocol_project = ProtocolProject.objects.get(pk=protocol_project_id)
         ctx = {
-            "protocol_project_id": protocol_project_id,
+            "protocol_project": protocol_project,
         }
         bonita_manager = BonitaManager(request=request)
         running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
