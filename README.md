@@ -8,6 +8,8 @@ La base de datos está administrada por el gestor Postgresql y hosteada en Herok
 La aplicación Cloud se encuentra en la carpeta remote-laboratory-2020 y deployada en el servidor Heroku en: 
 - `http://remote-laboratory-2020.herokuapp.com/`.
 
+El código de todo el proyecto se encuentra almacenado en el siguiente repositorio de GitHub:
+- `https://github.com/dssd-2020/international_laboratory`
 
 ## [Guía del Proyecto]
 
