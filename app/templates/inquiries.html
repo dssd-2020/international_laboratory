@@ -133,7 +133,15 @@
                     >
                         <div class="card-body">
                             <p class="card-title m-0 ">
-                                Son {{ inquirie_3 }} la cantidad de casos cancelados ante el fallo de un protocolo
+                                {% if inquirie_3 %}
+                                    {% if inquirie_3 == 1 %}
+                                        Solo 1 caso fue cancelado ante el fallo de un protocolo
+                                    {% else %}
+                                        Son {{ inquirie_3 }} la cantidad de casos que fueron cancelados ante el fallo de un protocolo
+                                    {% endif %}
+                                {% else %}
+                                    No hay casos que fueran cancelados ante el fallo de un protocolo
+                                {% endif %}
                             </p>
                         </div>
                     </div>
