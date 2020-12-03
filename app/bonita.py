@@ -336,27 +336,32 @@ class BonitaManager:
         return protocol_project
 
     def state_protocol_project(self, request, protocol_project):
-        if protocol_project.result and protocol_project.approved:
-            result = {"state": "Protocolo aprobado"}
-            return result
-        elif protocol_project.result and not protocol_project.approved:
-            result = {"state": "En resolución ante falla"}
-            return result
-        elif protocol_project.project.active:
-            protocol_project_run = self.protocol_project_run(request, protocol_project.project.case_id)
-            if protocol_project_run:
-                if str(protocol_project_run) == str(protocol_project.id):
-                    if protocol_project.protocol.is_local:
-                        result = {"state": "Protocolo listo para ejecutarse"}
+        if protocol_project.project.active:
+            if protocol_project.approved:
+                result = {"state": "Protocolo aprobado"}
+                return result
+            elif not protocol_project.result is None:
+                result = {"state": "En resolución ante falla"}
+                return result
+            else:
+                protocol_project_run = self.protocol_project_run(request, protocol_project.project.case_id)
+                if protocol_project_run:
+                    if str(protocol_project_run) == str(protocol_project.id):
+                        if protocol_project.protocol.is_local:
+                            result = {"state": "Protocolo listo para ejecutarse"}
+                            return result
+                        else:
+                            task = self.get_task_running(request, protocol_project.project.case_id)
+                            try:
+                                print(task["name"])
+                                result = {"state": "Protocolo en ejecución"}
+                                return result
+                            except:
+                                result = {"state": "Protocolo en ejecución"}
+                                return result
+                    elif not protocol_project.running_task:
+                        result = {"state": "El protocolo se encuentra en preparación"}
                         return result
-                    else:
-                        task = self.get_task_running(request, protocol_project.project.case_id)
-                        try:
-                            result = {"state": task["name"]}
-                            return result
-                        except:
-                            result = {"state": "Protocolo en ejecución"}
-                            return result
-                elif not protocol_project.running_task:
-                    result = {"state": "El protocolo se encuentra en preparación"}
-                    return result
+        else:
+            result = {"state": "El proyecto finalizó"}
+            return result

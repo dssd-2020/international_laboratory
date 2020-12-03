@@ -40,6 +40,7 @@ class HomeView(View):
             for protocol_project in responsible_protocols:
                 ctx["state_protocols"][protocol_project.id] = bonita_manager.state_protocol_project(request, protocol_project)
             ctx["responsible_protocols"] = responsible_protocols
+            print(ctx["state_protocols"])
         return render(request, "home.html", ctx)
 
     @login_required
