@@ -224,6 +224,7 @@ class LocalExecutionView(View):
         protocol = protocol_project.protocol
         activities = protocol.activities.all()
         ctx = {
+            "protocol_project": protocol_project,
             "activities": activities,
         }
         bonita_manager = BonitaManager(request=request)

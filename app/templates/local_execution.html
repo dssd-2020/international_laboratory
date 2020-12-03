@@ -8,12 +8,17 @@
 {% block content %}
     <div class="row mb-4">
         <div class="col text-center">
-            <h2 class="province-font-black">Ejecución de protocolo local</h2>
+            <h2 class="province-font-black">Informar resultado de actividades</h2>
         </div>
     </div>
     <div class="row mb-2">
-        <div class="col text-center">
-            <h4 class="province-font-bold">Listado de actividades</h4>
+        <div class="col">
+            <p class="m-0 text-justify">
+                A continuación, se deberá indicar las actividades del protocolo <span
+                    class="province-font-bold">{{ protocol_project.protocol.name }}</span> del proyecto <span
+                    class="province-font-bold">{{ protocol_project.project.name }}</span> que se hayan completado
+                correctamente
+            </p>
         </div>
     </div>
     <div class="row">
