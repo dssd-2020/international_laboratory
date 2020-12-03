@@ -137,8 +137,7 @@ def set_result_remote_protocol(request, pk):
     try:
         protocol_project = ProtocolProject.objects.get(pk=pk)
         if protocol_project:
-            approved = data["approved"] == "true"
-            protocol_project.approved = approved
+            protocol_project.approved = data["approved"]
             protocol_project.result = data["points"]
             protocol_project.save()
             notify(protocol_project.responsible, protocol_project.project, protocol_project.protocol)
