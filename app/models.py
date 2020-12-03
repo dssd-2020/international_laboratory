@@ -68,7 +68,7 @@ class Project(models.Model):
     class Meta:
         verbose_name = _("Proyecto")
         verbose_name_plural = _("Proyectos")
-        ordering = ["approved", "-id"]
+        ordering = ["-id"]
 
     def __unicode__(self):
         return u"%s" % self.name
@@ -88,6 +88,7 @@ class ProtocolProject(models.Model):
     class Meta:
         verbose_name = _("Protocolo en proyecto")
         verbose_name_plural = _("Protocolo en proyecto")
+        ordering = ["approved", "-id"]
 
     def __unicode__(self):
         return u"%s en %s" % (self.protocol, self.project)

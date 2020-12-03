@@ -30,7 +30,9 @@ class HomeView(View):
         if "Jefe de proyecto" in user_membership:
             # rpta = bonita_manager.get_task_running(request, project.case_id)
             # devuelve un json con name y state
-            ctx["managed_projects"] = Project.objects.filter(project_manager=user_logged_id)
+            managed_projects = Project.objects.filter(project_manager=user_logged_id)
+            ctx["managed_projects_in_execution"] = managed_projects.filter(approved__isnull=True)
+            ctx["managed_projects"] = managed_projects.filter(approved__isnull=False)
         if "Responsable de protocolo" in user_membership:
             ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
         return render(request, "home.html", ctx)
