@@ -228,6 +228,7 @@ class ProjectView(View):
                         )
                 try:
                     bonita_manager.set_active_project(request, project)
+                    bonita_manager.set_active_project_name(request, project)
                     running_activity = bonita_manager.get_activities_by_case(request, case_id)
                     bonita_manager.update_task_assignment(request, running_activity)
                     logging.info("La tarea %s fue asignada al usuario con ID: %s", running_activity,
