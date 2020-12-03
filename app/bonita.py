@@ -277,14 +277,11 @@ class BonitaManager:
             }
             return result
         except:
-            url = "".join([self.uri, "/API/bpm/archivedCase/?p=0&c=10&f=caseId%3d", case_id])
-            response = requests.get(url, cookies=request.session["bonita_cookies"])
-            if response.status_code != 200:
-                raise Exception("HTTP STATUS: " + str(response))
+            response = self.get_archived_case(request, case_id)
             try:
                 result = {
                     "name": "caso archivado",
-                    "state": json.loads(response.content)[0]["state"]
+                    "state": response[0]["state"]
                 }
                 return result
             except:
@@ -306,3 +303,10 @@ class BonitaManager:
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
         logging.debug(response.content)
+
+    def get_archived_case(self, request, case_id):
+        url = "".join([self.uri, "/API/bpm/archivedCase/?p=0&c=100&f=sourceObjectId=", case_id])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+        return json.loads(response.content)

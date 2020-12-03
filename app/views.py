@@ -377,7 +377,9 @@ class InquiriesView(View):
             },
         ]
         # Inquirie_2 Tiempo promedio de ejecución completa del caso en el proceso de negocio
-        ctx["inquirie_2"] = 12.45
+        projects_time = get_cases_average_time(bonita_manager, request)
+        ctx["inquirie_2"] = str(projects_time[1]).split('.')[0]
+        print(projects_time[0])
             # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar (pero no sé)
         # Inquirie_3 Cantidad de casos cancelados ante el fallo de un protocolo
         cancelled_projects = get_cases_cancelled(bonita_manager, request)
