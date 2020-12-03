@@ -7,7 +7,7 @@ from .decorators import login_required
 from .models import *
 from .monitor import *
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(message)s")
 
 
 class HomeView(View):
@@ -371,18 +371,23 @@ class InquiriesView(View):
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
+        
         # Inquirie_1 Jefes de proyecto con mayor cantidad de proyectos en espera de toma de decisión ante falla
         ctx["inquirie_1"] = get_on_failure(bonita_manager, request)
+
         # Inquirie_2 Tiempo promedio de ejecución completa del caso en el proceso de negocio
         projects_time = get_cases_average_time(bonita_manager, request)
-        ctx["inquirie_2"] = str(projects_time[1]).split('.')[0]
+        time = str(projects_time[1]).split(".")[0]
+        time = time if len(time.split(":")[0]) > 1 else "0" + time
+        ctx["inquirie_2"] = time
+        # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar
         # print(projects_time[0])
-            # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar (pero no sé)
+
         # Inquirie_3 Cantidad de casos cancelados ante el fallo de un protocolo
         cancelled_projects = get_cases_cancelled(bonita_manager, request)
         ctx["inquirie_3"] = len(cancelled_projects)
+        # Se puede contemplar tambien mandar cada proyecto cancelado para listar
         # print(cancelled_projects)
-            # Se puede contemplar tambien mandar cada proyecto cancelado para listar (pero no sé)
 
         return render(request, self.template_name, ctx)
 
