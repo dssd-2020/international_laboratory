@@ -83,9 +83,18 @@ class HomeView(View):
             protocol_project_run = self.protocol_project_run(request, protocol_project.project.case_id)
             if protocol_project_run:
                 if str(protocol_project_run) == str(protocol_project.id):
-                    # bonita_manager.get_task_running(request, project.case_id)
-                    result = {"state": "Protocolo listo para ejecutarse"}
-                    return result
+                    if protocol_project.protocol.is_local:
+                        result = {"state": "Protocolo listo para ejecutarse"}
+                        return result
+                    else:
+                        bonita_manager = BonitaManager(request=request)
+                        task = bonita_manager.get_task_running(request, protocol_project.project.case_id)
+                        try:
+                            result = {"state": task["name"]}
+                            return result
+                        except:
+                            result = {"state": "Protocolo en ejecución"}
+                            return result
                 elif not protocol_project.running_task:
                     result = {"state": "El protocolo se encuentra en preparación"}
                     return result
