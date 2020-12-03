@@ -9,12 +9,12 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
 def get_cases_cancelled(bonita_manager, request):
-    cant = 0
+    cancelled_projects = []
     projects = Project.objects.filter(active=False)
     for project in projects:
-        cant += 1 if case_cancelled(bonita_manager, request, project.case_id) else 0
-
-    return cant
+        if case_cancelled(bonita_manager, request, project.case_id):
+            cancelled_projects.append(project)
+    return cancelled_projects
 
 
 def case_cancelled(bonita_manager, request, case_id):
@@ -25,5 +25,5 @@ def case_cancelled(bonita_manager, request, case_id):
 
     if response.content:
         if "'content': 'cancelled'" in str(json.loads(response.content)):
-            return 1
-    return 0
+            return True
+    return False

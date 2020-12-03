@@ -362,7 +362,6 @@ class InquiriesView(View):
     @login_required
     def get(self, request, *args, **kwargs):
         bonita_manager = BonitaManager(request=request)
-        case_cancelled = get_cases_cancelled(bonita_manager, request)
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
@@ -381,7 +380,9 @@ class InquiriesView(View):
         ctx["inquirie_2"] = 12.45
             # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar (pero no sé)
         # Inquirie_3 Cantidad de casos cancelados ante el fallo de un protocolo
-        ctx["inquirie_3"] = 5
+        cancelled_projects = get_cases_cancelled(bonita_manager, request)
+        ctx["inquirie_3"] = len(cancelled_projects)
+        print(cancelled_projects)
             # Se puede contemplar tambien mandar cada proyecto cancelado para listar (pero no sé)
 
         return render(request, self.template_name, ctx)
