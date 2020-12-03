@@ -216,7 +216,6 @@ class BonitaManager:
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         logging.debug(response.content)
 
-
     def set_protocol_result(self, request, case_id, result):
         url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/protocol_state_approved"])
 
@@ -365,3 +364,14 @@ class BonitaManager:
         else:
             result = {"state": "El proyecto finalizó"}
             return result
+
+    def case_cancelled(self, request, case_id):
+        url = "".join([self.uri, "/API/bpm/archivedComment?&f=processInstanceId=", case_id])
+        response = requests.get(url, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response))
+
+        if response.content:
+            if "'content': 'cancelled'" in str(json.loads(response.content)):
+                return True
+        return False
