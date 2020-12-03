@@ -53,3 +53,30 @@ def get_cases_average_time(bonita_manager, request):
             average += date
         average = average / len(projects)
     return [projects, average]
+
+
+def get_on_failure(bonita_manager, request):
+    managers = {}
+    query = Project.objects.filter(active=True)
+    for project in query:
+        try:
+            result = bonita_manager.get_task_running(request, project.case_id)
+            if result and "No hay información sobre este caso" not in result:
+                try:
+                    if result['name'] == "Resolución ante falla":
+                        if project.project_manager not in managers.keys():
+                            managers[project.project_manager] = {'count': 0}
+                        managers[project.project_manager]['count'] += 1
+                except:
+                    continue
+        except:
+            continue
+    for manager in managers.keys():
+        try:
+            first_name, last_name = bonita_manager.get_user_names(request, manager)
+        except:
+            first_name = "Usuario"
+            last_name = "desconocido"
+        managers[manager]['first_name'] = first_name
+        managers[manager]['last_name'] = last_name
+    return managers

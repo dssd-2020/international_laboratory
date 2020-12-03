@@ -39,13 +39,13 @@
                          data-parent="#inquirie-1"
                     >
                         <div class="card-body">
-                            {% for entry in inquirie_1 %}
+                            {% for entry in inquirie_1.values %}
                                 <div class="card my-2">
                                     <div class="card-body">
                                         <div class="row justify-content-center">
                                             <div class="col">
                                                 <p class="card-title m-0 ">
-                                                    {{ entry.user_name }}
+                                                    {{ entry.first_name }} {{entry.last_name}}
                                                 </p>
                                             </div>
                                             <div class="col-3 text-center align-self-center">
