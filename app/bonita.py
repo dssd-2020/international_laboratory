@@ -296,11 +296,12 @@ class BonitaManager:
             "Content-type": "application/json"
         }
         data = {
-          "processInstanceId": case_id,
-          "content": "cancelled"
+            "processInstanceId": case_id,
+            "content": "cancelled",
+            "userId": 102
         }
 
         response = requests.post(url, json=data, headers=headers, cookies=request.session["bonita_cookies"])
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code))
-        logging.info(response.content)
+        logging.debug(response.content)

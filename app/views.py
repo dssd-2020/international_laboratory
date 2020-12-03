@@ -5,6 +5,9 @@ from .api import *
 from .bonita import BonitaManager
 from .decorators import login_required
 from .models import *
+from .monitor import *
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
 class HomeView(View):
@@ -315,6 +318,7 @@ class FailureResolutionView(View):
                     protocol_project.project.active = False
                     protocol_project.project.approved = False
                     bonita_manager.add_comment_case(request, protocol_project.project.case_id)
+                    protocol_project.project.save()
                 protocol_project.save()
                 try:
                     running_activity = bonita_manager.get_activities_by_case(request,
@@ -369,6 +373,7 @@ class InquiriesView(View):
     @login_required
     def get(self, request, *args, **kwargs):
         bonita_manager = BonitaManager(request=request)
+        case_cancelled = get_cases_cancelled(bonita_manager, request)
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
