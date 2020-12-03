@@ -12,6 +12,7 @@ La aplicación Cloud se encuentra en la carpeta remote-laboratory-2020 y deploya
 ## [Guía del Proyecto]
 
 + Importar en Bonita Soft el archivo international_laboratory/AprobacionDeMedicamentos-1.0.bos
++ Desplegar la organización Grupo02
 
 ## Deploy del proyecto internacional_laboratory
 
