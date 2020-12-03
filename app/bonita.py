@@ -361,9 +361,13 @@ class BonitaManager:
                     elif not protocol_project.running_task:
                         result = {"state": "El protocolo se encuentra en preparación"}
                         return result
+        elif self.case_cancelled(request, protocol_project.project.case_id):
+            result = {"state": "El proyecto se canceló"}
+            return result
         else:
             result = {"state": "El proyecto finalizó"}
             return result
+
 
     def case_cancelled(self, request, case_id):
         url = "".join([self.uri, "/API/bpm/archivedComment?&f=processInstanceId=", case_id])
