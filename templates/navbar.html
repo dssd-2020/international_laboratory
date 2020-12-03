@@ -1,0 +1,83 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="{% url "home" %}">
+        <img src="{% static "img/international-laboratory-logo.png" %}"
+             width="40"
+             height="40"
+             class="d-inline-block align-top"
+             alt="Logo del Laboratorio Internacional"
+        >
+    </a>
+    <button class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse"
+         id="navbarNav"
+    >
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link {% if "/" == request.path %}active province-font-medium{% endif %}"
+                   href="{% url "home" %}"
+                >
+                    <p class="m-0">
+                        Inicio
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if "protocolo" in request.path %}active province-font-medium{% endif %}"
+                   href="{% url "protocolos" %}"
+                >
+                    <p class="m-0">
+                        Protocolos
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if "actividad" in request.path %}active province-font-medium{% endif %}"
+                   href="{% url "actividades" %}"
+                >
+                    <p class="m-0">
+                        Actividades
+                    </p>
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            {% if "Jefe de proyecto" in request.session.user_logged.user_membership %}
+                <li class="nav-item text-right">
+                    <a class="nav-link {% if "consulta" in request.path %}active province-font-medium{% endif %}"
+                       href="{% url "consultas" %}"
+                    >
+                        <p class="m-0">
+                            Monitoreo
+                        </p>
+                    </a>
+                </li>
+            {% endif %}
+            <li class="nav-item text-right">
+                <a href="{% url "notificaciones" %}">
+                    <span class="navbar-text text-white btn"
+                          id="notification-button"
+                    >
+                        <i class="far fa-bell" id="notification-icon"></i> <span
+                            class="badge badge-pill bg-primary-blue" id="notification-count"></span>
+                    </span>
+                </a>
+                <span class="navbar-text province-font-medium">
+                    {{ request.session.user_logged.firstname }} {{ request.session.user_logged.lastname }}
+                </span>
+                <span class="navbar-text text-white btn"
+                      id="logout-submit"
+                >
+                    <i class="fas fa-sign-out-alt"></i>
+                </span>
+            </li>
+        </ul>
+    </div>
+</nav>

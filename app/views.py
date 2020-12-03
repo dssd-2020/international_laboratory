@@ -7,7 +7,7 @@ from .decorators import login_required
 from .models import *
 from .monitor import *
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(message)s")
 
 
 class HomeView(View):
@@ -27,17 +27,14 @@ class HomeView(View):
         ctx = {}
         user_logged_id = request.session["user_logged"]["user_id"]
         bonita_manager = BonitaManager(request)
-        if "Jefe de proyecto" in request.session["user_membership"]:
-            # rpta = bonita_manager.get_task_running(request, project.case_id)
-            # print(rpta)
-            # devuelve un json con name y state
+        if "Jefe de proyecto" in request.session["user_logged"]["user_membership"]:
             managed_projects = Project.objects.filter(project_manager=user_logged_id)
             ctx["task_running"] = {}
             for project in managed_projects:
                 ctx["task_running"][project.case_id] = bonita_manager.get_task_running(request, project.case_id)
             ctx["managed_projects_in_execution"] = managed_projects.filter(approved__isnull=True)
             ctx["managed_projects"] = managed_projects.filter(approved__isnull=False)
-        if "Responsable de protocolo" in request.session["user_membership"]:
+        if "Responsable de protocolo" in request.session["user_logged"]["user_membership"]:
             ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
         return render(request, "home.html", ctx)
 
@@ -77,7 +74,7 @@ class ActivityView(View):
             }
             return render(request, "activities_list.html", ctx)
         else:
-            if "Jefe de proyecto" in request.session["user_membership"]:
+            if "Jefe de proyecto" in request.session["user_logged"]["user_membership"]:
                 return render(request, "create_activity.html")
             else:
                 return redirect("actividades")
@@ -109,7 +106,7 @@ class ProtocolView(View):
             ctx["protocols"] = protocols
             return render(request, "protocols_list.html", ctx)
         else:
-            if "Jefe de proyecto" in request.session["user_membership"]:
+            if "Jefe de proyecto" in request.session["user_logged"]["user_membership"]:
                 ctx["activities"] = Activity.objects.all()
                 return render(request, "create_protocol.html", ctx)
             else:
@@ -159,12 +156,11 @@ class ProjectView(View):
                     pass
             return redirect("home")
 
-        user_logged = bonita_manager.get_user_logged(request)
         users_protocol_responsible = bonita_manager.get_users_by_role(request, "Responsable de protocolo")
         ctx = {
             "project_manager": {
-                "id": user_logged["user_id"],
-                "name": user_logged["user_name"]
+                "id": request.session["user_logged"]["user_id"],
+                "name": "{} {}".format(request.session["user_logged"]["firstname"], request.session["user_logged"]["lastname"])
             },
             "users": users_protocol_responsible,
             "protocols": Protocol.objects.all(),
@@ -372,18 +368,23 @@ class InquiriesView(View):
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
+
         # Inquirie_1 Jefes de proyecto con mayor cantidad de proyectos en espera de toma de decisión ante falla
         ctx["inquirie_1"] = get_on_failure(bonita_manager, request)
+
         # Inquirie_2 Tiempo promedio de ejecución completa del caso en el proceso de negocio
         projects_time = get_cases_average_time(bonita_manager, request)
-        ctx["inquirie_2"] = str(projects_time[1]).split('.')[0]
+        time = str(projects_time[1]).split(".")[0]
+        time = time if len(time.split(":")[0]) > 1 else "0" + time
+        ctx["inquirie_2"] = time
+        # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar
         # print(projects_time[0])
-            # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar (pero no sé)
+
         # Inquirie_3 Cantidad de casos cancelados ante el fallo de un protocolo
         cancelled_projects = get_cases_cancelled(bonita_manager, request)
         ctx["inquirie_3"] = len(cancelled_projects)
+        # Se puede contemplar tambien mandar cada proyecto cancelado para listar
         # print(cancelled_projects)
-            # Se puede contemplar tambien mandar cada proyecto cancelado para listar (pero no sé)
 
         return render(request, self.template_name, ctx)
 

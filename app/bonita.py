@@ -1,6 +1,7 @@
 import json
-import requests
 import logging
+
+import requests
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
@@ -14,7 +15,7 @@ class BonitaManager:
         if request is None:
             request = {}
         elif "user_logged" in request.session:
-            self.login(request, request.session["username"], request.session["password"])
+            self.login(request, request.session["user_logged"]["user_name"], request.session["user_logged"]["password"])
             self.process_id = self.get_process_id(request)
 
     def headers(self, request):
@@ -42,9 +43,9 @@ class BonitaManager:
             }
             request.session["user_logged"] = self.get_user_logged(request)
             logging.info('El usuario %s ha iniciado sesión', request.session["user_logged"]['user_name'])
-            request.session["username"] = username
-            request.session["password"] = password
-            request.session["user_membership"] = self.get_membership_by_user(request)
+            request.session["user_logged"]["firstname"], request.session["user_logged"]["lastname"] = self.get_user_names(request, request.session["user_logged"]['user_id'])
+            request.session["user_logged"]["user_membership"] = self.get_membership_by_user(request)
+            request.session["user_logged"]["password"] = password
         else:
             return False
         return response
@@ -56,8 +57,6 @@ class BonitaManager:
             headers = {"Content-Type": "application/x-www-form-urlencoded"}
             requests.get(url, data=data, headers=headers)
             del request.session["user_logged"]
-            del request.session["username"]
-            del request.session["password"]
             del request.session["bonita_cookies"]
             return True
         return False
@@ -128,7 +127,6 @@ class BonitaManager:
         name = "Configuración del proyecto"
         url = "".join([self.uri, "/API/bpm/humanTask?p=0&c=100&f=name=", name])
         response = requests.get(url, cookies=request.session["bonita_cookies"])
-        print(json.loads(response.content))
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response))
         return json.loads(response.content)
@@ -218,6 +216,7 @@ class BonitaManager:
         response = requests.get(url, cookies=request.session["bonita_cookies"])
         logging.debug(response.content)
 
+
     def set_protocol_result(self, request, case_id, result):
         url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/protocol_state_approved"])
 
@@ -233,7 +232,6 @@ class BonitaManager:
         # VER EL VALOR DE LA VARIABLE ACTUALIZADA
         url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/protocol_state_approved"])
         response = requests.get(url, cookies=request.session["bonita_cookies"])
-        print(response.content)
 
     def set_resolution_failure(self, request, case_id, result):
         url = "".join([self.uri, "/API/bpm/caseVariable/", case_id, "/resolution_failure_var"])
@@ -250,7 +248,6 @@ class BonitaManager:
         # VER EL VALOR DE LA VARIABLE ACTUALIZADA
         # url = "".join([self.uri, "/API/bpm/caseVariable/", self.get_case(request), "/resolution_failure_var"])
         # response = requests.get(url, cookies=request.session["bonita_cookies"])
-        # print(response.content)
 
     def get_membership_by_user(self, request):
         url = "".join(
