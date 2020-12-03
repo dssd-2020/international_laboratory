@@ -5,7 +5,8 @@ Proyecto realizado en *Django3.1*.
 
 La base de datos está administrada por el gestor Postgresql y hosteada en Heroku, no se necesita una base local.
 
-La aplicación Cloud se encuentra en la carpeta remote-laboratory-2020 y deployada en el servidor Heroku en `http://remote-laboratory-2020.herokuapp.com/`.
+La aplicación Cloud se encuentra en la carpeta remote-laboratory-2020 y deployada en el servidor Heroku en: 
+- `http://remote-laboratory-2020.herokuapp.com/`.
 
 
 ## [Guía del Proyecto]
