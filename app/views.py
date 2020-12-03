@@ -27,7 +27,9 @@ class HomeView(View):
         ctx = {}
         user_logged_id = request.session["user_logged"]["user_id"]
         if "Jefe de proyecto" in request.session["user_membership"]:
+            # bonita_manager = BonitaManager(request)
             # rpta = bonita_manager.get_task_running(request, project.case_id)
+            # print(rpta)
             # devuelve un json con name y state
             managed_projects = Project.objects.filter(project_manager=user_logged_id)
             ctx["managed_projects_in_execution"] = managed_projects.filter(approved__isnull=True)
