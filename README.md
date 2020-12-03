@@ -1,7 +1,8 @@
 # International laboratory
 Se desea modelar el proceso de aprobación de medicamentos en un laboratorio internacional.
 
-Proyecto realizaco en *Django3.1*.
+Proyecto realizado en *Django3.1*.
+
 La base de datos está administrada por el gestor Postgresql y hosteada en Heroku, no se necesita una base local.
 
 ## [Guía del Proyecto]
@@ -12,10 +13,10 @@ La base de datos está administrada por el gestor Postgresql y hosteada en Herok
 
 - Crear virtualenv de python3 y activarla
 - Instalar dependencias del proyecto
-`cd international_laboratory`
-`pip install -r requirements.txt`
+  - `cd international_laboratory`
+  - `pip install -r requirements.txt`
 - Correr servidor de python
-`python manage.py runserver`
+  - `python manage.py runserver`
 - Logearse en `/`
 
 
