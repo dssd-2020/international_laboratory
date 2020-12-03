@@ -10,4 +10,135 @@
             <h2 class="province-font-black">Consultas para el monitoreo de procesos</h2>
         </div>
     </div>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="accordion"
+                 id="inquirie-1"
+            >
+                <div class="card">
+                    <div class="card-header"
+                         id="inquirie-1-header"
+                    >
+                        <div class="row justify-content-center">
+                            <div class="col">
+                                <button class="btn btn-block text-left province-font-medium"
+                                        type="button"
+                                        data-toggle="collapse"
+                                        data-target="#inquirie-1-data"
+                                        aria-expanded="true"
+                                        aria-controls="inquirie-1-data">
+                                    Jefes de proyecto con mayor cantidad de proyectos en espera de toma de decisión ante
+                                    falla
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="inquirie-1-data"
+                         class="collapse show"
+                         aria-labelledby="inquirie-1-header"
+                         data-parent="#inquirie-1"
+                    >
+                        <div class="card-body">
+                            {% for entry in inquirie_1 %}
+                                <div class="card my-2">
+                                    <div class="card-body">
+                                        <div class="row justify-content-center">
+                                            <div class="col">
+                                                <p class="card-title m-0 ">
+                                                    {{ entry.user_name }}
+                                                </p>
+                                            </div>
+                                            <div class="col-3 text-center align-self-center">
+                                                <span class="btn btn-block badge badge-pill bg-secondary text-white">{{ entry.count }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="accordion"
+                 id="inquirie-2"
+            >
+                <div class="card">
+                    <div class="card-header"
+                         id="inquirie-2-header"
+                    >
+                        <div class="row justify-content-center">
+                            <div class="col">
+                                <button class="btn btn-block text-left province-font-medium"
+                                        type="button"
+                                        data-toggle="collapse"
+                                        data-target="#inquirie-2-data"
+                                        aria-expanded="true"
+                                        aria-controls="inquirie-2-data">
+                                    Tiempo promedio de ejecución completa del caso en el proceso de negocio
+                                </button>
+                            </div>
+                            <div class="col-3 text-center align-self-center">
+                                <span class="btn btn-block badge badge-pill bg-secondary text-white">{{ inquirie_2 }} minutos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="inquirie-2-data"
+                         class="collapse show"
+                         aria-labelledby="inquirie-2-header"
+                         data-parent="#inquirie-2"
+                    >
+                        <div class="card-body">
+                            <p class="card-title m-0 ">
+                                El tiempo promedio de ejecución completa del caso en el proceso de negocio es de {{ inquirie_2 }} minutos
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="accordion"
+                 id="inquirie-3"
+            >
+                <div class="card">
+                    <div class="card-header"
+                         id="inquirie-3-header"
+                    >
+                        <div class="row justify-content-center">
+                            <div class="col">
+                                <button class="btn btn-block text-left province-font-medium"
+                                        type="button"
+                                        data-toggle="collapse"
+                                        data-target="#inquirie-3-data"
+                                        aria-expanded="true"
+                                        aria-controls="inquirie-3-data">
+                                    Cantidad de casos cancelados ante el fallo de un protocolo
+                                </button>
+                            </div>
+                            <div class="col-3 text-center align-self-center">
+                                <span class="btn btn-block badge badge-pill bg-secondary text-white">{{ inquirie_3 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="inquirie-3-data"
+                         class="collapse show"
+                         aria-labelledby="inquirie-3-header"
+                         data-parent="#inquirie-3"
+                    >
+                        <div class="card-body">
+                            <p class="card-title m-0 ">
+                                Son {{ inquirie_3 }} la cantidad de casos cancelados ante el fallo de un protocolo
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

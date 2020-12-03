@@ -372,6 +372,24 @@ class InquiriesView(View):
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
+        # Inquirie_1 Jefes de proyecto con mayor cantidad de proyectos en espera de toma de decisión ante falla
+        ctx["inquirie_1"] = [
+            {
+                "user_name": "walter.bates",
+                "count": 5
+            },
+            {
+                "user_name": "alejo.marin",
+                "count": 2
+            },
+        ]
+        # Inquirie_2 Tiempo promedio de ejecución completa del caso en el proceso de negocio
+        ctx["inquirie_2"] = 12.45
+            # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar (pero no sé)
+        # Inquirie_3 Cantidad de casos cancelados ante el fallo de un protocolo
+        ctx["inquirie_3"] = 5
+            # Se puede contemplar tambien mandar cada proyecto cancelado para listar (pero no sé)
+
         return render(request, self.template_name, ctx)
 
     @login_required
