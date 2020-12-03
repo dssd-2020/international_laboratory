@@ -152,9 +152,14 @@ class ProjectView(View):
         if "s" in kwargs:
             if "Jefe de proyecto" in bonita_manager.get_membership_by_user(request):
                 try:
+                    project = Project.objects.get(pk=kwargs["s"])
                     ctx = {
-                        "project": Project.objects.get(pk=kwargs["s"])
+                        "project": project,
+                        "state_protocols": {},
+                        "task_running": bonita_manager.get_task_running(request, project.case_id)
                     }
+                    for protocol_project in project.protocolproject_set.all():
+                        ctx["state_protocols"][protocol_project.id] = bonita_manager.state_protocol_project(request, protocol_project)
                     return render(request, "project_detail.html", ctx)
                 except Project.DoesNotExist:
                     pass
