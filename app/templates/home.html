@@ -38,40 +38,11 @@
                         </tr>
                         </thead>
                         <tbody>
+                        {% for project in managed_projects_in_execution %}
+                            {% include "project_item.html" with project=project %}
+                        {% endfor %}
                         {% for project in managed_projects %}
-                            <tr>
-                                <td class="d-none">
-                                    {{ project.id }}
-                                </td>
-                                <td>
-                                    <div class="card my-2">
-                                        <div class="card-body">
-                                            <div class="row justify-content-center">
-                                                <div class="col">
-                                                    <p class="card-title m-0 ">
-                                                        {{ project.name }}
-                                                    </p>
-                                                </div>
-                                                <div class="col-3 text-center align-self-center">
-                                                    {% if project.approved %}
-                                                        <span class="btn btn-block badge badge-pill bg-success text-white">
-                                                            Proyecto aprobado
-                                                        </span>
-                                                    {% elif project.approved is False %}
-                                                        <span class="btn btn-block badge badge-pill bg-danger text-white">
-                                                            Proyecto no aprobado
-                                                        </span>
-                                                    {% else %}
-                                                        <span class="btn btn-block badge badge-pill bg-dark text-white">
-                                                            Proyecto en ejecución
-                                                        </span>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            {% include "project_item.html" with project=project %}
                         {% endfor %}
                         </tbody>
                     </table>

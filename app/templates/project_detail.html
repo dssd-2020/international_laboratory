@@ -7,7 +7,75 @@
 {% block content %}
     <div class="row mb-4">
         <div class="col text-center">
-            <h2 class="province-font-black">Detalle del proyecto {{ project.name }}</h2>
+            <h2 class="province-font-black">Detalle del proyecto</h2>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col text-center">
+            <h4 class="province-font-bold">{{ project.name }}</h4>
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <h5 class="primary-blue province-font-medium">
+                        Protocolos del proyecto
+                    </h5>
+                </div>
+            </div>
+            {% for protocolproject in project.protocolproject_set.all %}
+                <div class="row">
+                    <div class="col">
+                        <div class="card my-2">
+                            <div class="card-body">
+                                <div class="row justify-content-center">
+                                    <div class="col">
+                                        <p class="card-title m-0 ">
+                                            {{ protocolproject.protocol.name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-3 text-center align-self-center">
+                                        {% if protocolproject.approved %}
+                                            <span class="btn btn-block badge badge-pill bg-success text-white">Protocolo aprobado</span>
+                                        {% elif protocolproject.approved is False %}
+                                            <span class="btn btn-block badge badge-pill bg-danger text-white">Protocolo no aprobado</span>
+                                        {% else %}
+                                            <span class="btn btn-block badge badge-pill bg-dark text-white">Protocolo en ejecución</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <h5 class="primary-blue province-font-medium">
+                        Estado del proyecto
+                    </h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card my-2">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <div class="col">
+                                    <p class="card-title m-0 ">
+                                        Aca va el estado actual del proyecto
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

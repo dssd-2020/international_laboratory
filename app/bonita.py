@@ -276,7 +276,7 @@ class BonitaManager:
             }
             return result
         except:
-            url = "".join([self.uri, "/API/bpm/archivedCase?c=", case_id])
+            url = "".join([self.uri, "/API/bpm/archivedCase/?p=0&c=10&f=caseId%3d", case_id])
             response = requests.get(url, cookies=request.session["bonita_cookies"])
             if response.status_code != 200:
                 raise Exception("HTTP STATUS: " + str(response))
