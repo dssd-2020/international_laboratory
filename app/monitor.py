@@ -72,10 +72,10 @@ def get_on_failure(bonita_manager, request):
             continue
     for manager in managers.keys():
         try:
-            first_name, last_name = bonita_manager.get_user_names(request, manager)
+            firstname, lastname = bonita_manager.get_user_names(request, manager)
         except:
-            first_name = "Usuario"
-            last_name = "desconocido"
-        managers[manager]['first_name'] = first_name
-        managers[manager]['last_name'] = last_name
+            firstname = "Usuario"
+            lastname = "desconocido"
+        managers[manager]['firstname'] = firstname
+        managers[manager]['lastname'] = lastname
     return managers
