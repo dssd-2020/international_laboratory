@@ -5,6 +5,9 @@ Proyecto realizado en *Django3.1*.
 
 La base de datos está administrada por el gestor Postgresql y hosteada en Heroku, no se necesita una base local.
 
+La aplicación Cloud se encuentra en la carpeta remote-laboratory-2020 y deployada en el servidor Heroku en `http://remote-laboratory-2020.herokuapp.com/`.
+
+
 ## [Guía del Proyecto]
 
 + Importar en Bonita Soft el archivo international_laboratory/AprobacionDeMedicamentos-1.0.bos
@@ -22,6 +25,6 @@ La base de datos está administrada por el gestor Postgresql y hosteada en Herok
 
 ### Features
 
-+ `/admin` con gestión integral de todo el proyecto
++ `/admin` con gestión integral de todo el sistema
 + ABM de Actividades y Protocolos, los cuales son reulizables
-+ `/monitoreo` 
++ `/monitoreo`para las consultas gerenciales
