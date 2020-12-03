@@ -24,19 +24,15 @@ class HomeView(View):
 
     @login_required
     def home(self, request, *args, **kwargs):
-        bonita_manager = BonitaManager(request=request)
-        user_membership = bonita_manager.get_membership_by_user(request)
-        ctx = {
-            "user_membership": user_membership,
-        }
+        ctx = {}
         user_logged_id = request.session["user_logged"]["user_id"]
-        if "Jefe de proyecto" in user_membership:
+        if "Jefe de proyecto" in request.session["user_membership"]:
             # rpta = bonita_manager.get_task_running(request, project.case_id)
             # devuelve un json con name y state
             managed_projects = Project.objects.filter(project_manager=user_logged_id)
             ctx["managed_projects_in_execution"] = managed_projects.filter(approved__isnull=True)
             ctx["managed_projects"] = managed_projects.filter(approved__isnull=False)
-        if "Responsable de protocolo" in user_membership:
+        if "Responsable de protocolo" in request.session["user_membership"]:
             ctx["responsible_protocols"] = ProtocolProject.objects.filter(responsible=user_logged_id)
         return render(request, "home.html", ctx)
 
@@ -67,19 +63,16 @@ class HomeView(View):
 class ActivityView(View):
     @login_required
     def get(self, request, *args, **kwargs):
-        bonita_manager = BonitaManager(request=request)
-        user_membership = bonita_manager.get_membership_by_user(request)
-        ctx = {
-            "user_membership": user_membership,
-        }
         if "actividades" in request.path:
             activities = Activity.objects.all()
             if "s" in kwargs:
                 activities = activities.filter(pk=kwargs["s"])
-            ctx["activities"] = activities
+            ctx = {
+                "activities": activities
+            }
             return render(request, "activities_list.html", ctx)
         else:
-            if "Jefe de proyecto" in user_membership:
+            if "Jefe de proyecto" in request.session["user_membership"]:
                 return render(request, "create_activity.html")
             else:
                 return redirect("actividades")
@@ -103,11 +96,7 @@ class ActivityView(View):
 class ProtocolView(View):
     @login_required
     def get(self, request, *args, **kwargs):
-        bonita_manager = BonitaManager(request=request)
-        user_membership = bonita_manager.get_membership_by_user(request)
-        ctx = {
-            "user_membership": user_membership,
-        }
+        ctx = {}
         if "protocolos" in request.path:
             protocols = Protocol.objects.all()
             if "s" in kwargs:
@@ -115,7 +104,7 @@ class ProtocolView(View):
             ctx["protocols"] = protocols
             return render(request, "protocols_list.html", ctx)
         else:
-            if "Jefe de proyecto" in user_membership:
+            if "Jefe de proyecto" in request.session["user_membership"]:
                 ctx["activities"] = Activity.objects.all()
                 return render(request, "create_protocol.html", ctx)
             else:
@@ -377,6 +366,24 @@ class InquiriesView(View):
         if "Jefe de proyecto" not in bonita_manager.get_membership_by_user(request):
             return redirect("home")
         ctx = {}
+        # Inquirie_1 Jefes de proyecto con mayor cantidad de proyectos en espera de toma de decisión ante falla
+        ctx["inquirie_1"] = [
+            {
+                "user_name": "walter.bates",
+                "count": 5
+            },
+            {
+                "user_name": "alejo.marin",
+                "count": 2
+            },
+        ]
+        # Inquirie_2 Tiempo promedio de ejecución completa del caso en el proceso de negocio
+        ctx["inquirie_2"] = 12.45
+            # Se puede contemplar tambien mandar cada proyecto con su tiempo de ejecución para listar (pero no sé)
+        # Inquirie_3 Cantidad de casos cancelados ante el fallo de un protocolo
+        ctx["inquirie_3"] = 5
+            # Se puede contemplar tambien mandar cada proyecto cancelado para listar (pero no sé)
+
         return render(request, self.template_name, ctx)
 
     @login_required

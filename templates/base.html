@@ -98,6 +98,17 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
+                    {% if "Jefe de proyecto" in request.session.user_membership %}
+                        <li class="nav-item text-right">
+                            <a class="nav-link {% if "consulta" in request.path %}active province-font-medium{% endif %}"
+                               href="{% url "consultas" %}"
+                            >
+                                <p class="m-0">
+                                    Monitoreo
+                                </p>
+                            </a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item text-right">
                         <a href="{% url "notificaciones" %}">
                         <span class="navbar-text text-white btn"
