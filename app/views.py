@@ -274,12 +274,13 @@ class FailureResolutionView(View):
     @login_required
     def get(self, request, *args, **kwargs):
         protocol_project_id = kwargs["protocol_project"]
+        protocol_project = ProtocolProject.objects.get(pk=protocol_project_id)
         ctx = {
-            "protocol_project": ProtocolProject.objects.get(pk=protocol_project_id),
+            "protocol_project": protocol_project,
         }
-        # bonita_manager = BonitaManager(request=request)
-        # running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
-        # bonita_manager.update_task_assignment(request, running_activity)
+        bonita_manager = BonitaManager(request=request)
+        running_activity = bonita_manager.get_activities_by_case(request, protocol_project.project.case_id)
+        bonita_manager.update_task_assignment(request, running_activity)
 
         return render(request, self.template_name, ctx)
 
