@@ -172,15 +172,14 @@ class BonitaManager:
         if response.status_code != 200:
             raise Exception("HTTP STATUS: " + str(response.status_code) + '----' + str(response))
 
-    def update_task_state(self, request, activity, state, project=None):
+    def update_task_state(self, request, activity, state):
         url = "".join([self.uri, "/API/bpm/activity/", activity])
         headers = {
             "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
             "Content-type": "application/json"
         }
         data = {
-            "state": state,
-            # "dueDate": project.end_date
+            "state": state
         }
 
         response = requests.put(url, data=json.dumps(data), headers=headers, cookies=request.session["bonita_cookies"])
@@ -289,3 +288,19 @@ class BonitaManager:
                 return result
             except:
                 return json.loads("No hay información sobre este caso")
+
+    def add_comment_case(self, request, case_id):
+        url = "".join([self.uri, "/API/bpm/comment"])
+        headers = {
+            "X-Bonita-API-Token": request.session["bonita_cookies"]["X-Bonita-API-Token"],
+            "Content-type": "application/json"
+        }
+        data = {
+          "processInstanceId": case_id,
+          "content": "cancelled"
+        }
+
+        response = requests.post(url, json=data, headers=headers, cookies=request.session["bonita_cookies"])
+        if response.status_code != 200:
+            raise Exception("HTTP STATUS: " + str(response.status_code))
+        logging.info(response.content)

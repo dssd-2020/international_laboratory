@@ -208,7 +208,7 @@ class ProjectView(View):
                     bonita_manager.update_task_assignment(request, running_activity)
                     logging.info("La tarea %s fue asignada al usuario con ID: %s", running_activity,
                                  bonita_manager.check_task_assignment(request, running_activity))
-                    bonita_manager.update_task_state(request, running_activity, "completed", project)
+                    bonita_manager.update_task_state(request, running_activity, "completed")
                     logging.info("La tarea %s pasó al estado: %s", running_activity,
                                  bonita_manager.check_task_state(request, running_activity))
                 except Exception as e:
@@ -303,14 +303,18 @@ class FailureResolutionView(View):
                 4: "cancel_project"
             }.get(resolution_case, False)
             if resolution:
+                bonita_manager = BonitaManager(request)
                 if resolution == "continue":
                     protocol_project.approved = False
                 elif resolution == "restart_protocol":
                     protocol_project.approved = None
                     protocol_project.result = None
+                elif resolution == "cancel_project":
+                    protocol_project.project.active = False
+                    protocol_project.project.approved = False
+                    bonita_manager.add_comment_case(request, protocol_project.project.case_id)
                 protocol_project.save()
                 try:
-                    bonita_manager = BonitaManager(request)
                     running_activity = bonita_manager.get_activities_by_case(request,
                                                                              protocol_project.project.case_id)
                     bonita_manager.set_resolution_failure(request, protocol_project.project.case_id, resolution_case)
