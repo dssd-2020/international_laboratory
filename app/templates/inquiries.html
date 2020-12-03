@@ -39,22 +39,28 @@
                          data-parent="#inquirie-1"
                     >
                         <div class="card-body">
-                            {% for entry in inquirie_1 %}
-                                <div class="card my-2">
-                                    <div class="card-body">
-                                        <div class="row justify-content-center">
-                                            <div class="col">
-                                                <p class="card-title m-0 ">
-                                                    {{ entry.user_name }}
-                                                </p>
-                                            </div>
-                                            <div class="col-3 text-center align-self-center">
-                                                <span class="btn btn-block badge badge-pill bg-secondary text-white">{{ entry.count }}</span>
+                            {% if inquirie_1 %}
+                                {% for entry in inquirie_1.values %}
+                                    <div class="card my-2">
+                                        <div class="card-body">
+                                            <div class="row justify-content-center">
+                                                <div class="col">
+                                                    <p class="card-title m-0 ">
+                                                        {{ entry.firstname }} {{ entry.lastname }}
+                                                    </p>
+                                                </div>
+                                                <div class="col-3 text-center align-self-center">
+                                                    <span class="btn btn-block badge badge-pill bg-secondary text-white">{{ entry.count }}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                <p class="card-title m-0 ">
+                                    No hay proyectos en resolución ante falla por lo que esta consulta no posee información
+                                </p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -93,7 +99,8 @@
                     >
                         <div class="card-body">
                             <p class="card-title m-0 ">
-                                El tiempo promedio de ejecución completa del caso en el proceso de negocio es de {{ inquirie_2 }} minutos
+                                El tiempo promedio de ejecución completa del caso en el proceso de negocio es
+                                de {{ inquirie_2 }} minutos
                             </p>
                         </div>
                     </div>
@@ -137,7 +144,8 @@
                                     {% if inquirie_3 == 1 %}
                                         Solo 1 caso fue cancelado ante el fallo de un protocolo
                                     {% else %}
-                                        Son {{ inquirie_3 }} la cantidad de casos que fueron cancelados ante el fallo de un protocolo
+                                        Son {{ inquirie_3 }} la cantidad de casos que fueron cancelados ante el fallo de
+                                        un protocolo
                                     {% endif %}
                                 {% else %}
                                     No hay casos que fueran cancelados ante el fallo de un protocolo
