@@ -331,7 +331,10 @@ class BonitaManager:
         return [json.loads(response.content)["firstname"], json.loads(response.content)["lastname"]]
 
     def protocol_project_run(self, request, case_id):
-        protocol_project = self.get_case_variable(request, case_id, "protocol_project")
+        try:
+            protocol_project = self.get_case_variable(request, case_id, "protocol_project")
+        except:
+            return None
         return protocol_project
 
     def state_protocol_project(self, request, protocol_project):
