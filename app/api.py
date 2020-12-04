@@ -142,7 +142,7 @@ def set_result_remote_protocol(request, pk):
             protocol_project.result = data["points"]
             protocol_project.save()
             notify(protocol_project.responsible, False, protocol_project.project, protocol_project.protocol)
-            if not approved:
+            if not data["approved"]:
                 notify(protocol_project.project.project_manager, True, protocol_project.project, protocol_project.protocol)
             return JsonResponse(
                 {'message': "El protocolo fue actualizado", 'status': status.HTTP_200_OK})
