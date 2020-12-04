@@ -17,20 +17,20 @@
                     </div>
                     <div class="col-3 text-center align-self-center">
                         {% if project.approved %}
-                            <span class="btn btn-block badge badge-pill bg-success text-white">Proyecto aprobado</span>
+                            <span class="btn-block badge badge-pill bg-success text-white">Proyecto aprobado</span>
                         {% elif project.approved is False %}
-                            <span class="btn btn-block badge badge-pill bg-warning text-white">Proyecto no aprobado</span>
+                            <span class="btn-block badge badge-pill bg-warning text-white">Proyecto no aprobado</span>
                         {% else %}
                             {% for case_id, data in task_running.items %}
                                 {% if case_id == project.case_id %}
                                     {% if data.state %}
                                         {% if data.state == "failed" %}
-                                            <span class="btn btn-block badge badge-pill bg-danger text-white">Ejecución fallida</span>
+                                            <span class="btn-block badge badge-pill bg-danger text-white">Ejecución fallida</span>
                                         {% else %}
-                                            <span class="btn btn-block badge badge-pill bg-dark text-white">Proyecto en ejecución</span>
+                                            <span class="btn-block badge badge-pill bg-dark text-white">Proyecto en ejecución</span>
                                         {% endif %}
                                     {% else %}
-                                        <span class="btn btn-block badge badge-pill bg-secondary text-white">No hay información</span>
+                                        <span class="btn-block badge badge-pill bg-secondary text-white">No hay información</span>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}

@@ -89,24 +89,24 @@
                                                         {% if protocol_project_id == protocol_project.id %}
                                                             {% if data.state %}
                                                                 {% if data.state == "Protocolo aprobado" %}
-                                                                    <span class="btn btn-block badge badge-pill bg-success text-white">Aprobado</span>
+                                                                    <span class="btn-block badge badge-pill bg-success text-white">Aprobado</span>
                                                                 {% elif data.state == "En resolución ante falla" %}
-                                                                    <span class="btn btn-block badge badge-pill bg-warning text-white">En resolución ante falla</span>
+                                                                    <span class="btn-block badge badge-pill bg-warning text-white">En resolución ante falla</span>
                                                                 {% elif data.state == "Protocolo listo para ejecutarse" %}
                                                                     <a href="{% url "ejecucion_local" protocol_project=protocol_project.id %}">
                                                                         <span class="btn btn-block badge badge-pill bg-primary-blue text-white">Ejecutar</span>
                                                                     </a>
                                                                 {% elif data.state == "Protocolo en ejecución" %}
-                                                                    <span class="btn btn-block badge badge-pill bg-primary-blue text-white">En ejecución</span>
+                                                                    <span class="btn-block badge badge-pill bg-primary-blue text-white">En ejecución</span>
                                                                 {% elif data.state == "El protocolo se encuentra en preparación" %}
-                                                                    <span class="btn btn-block badge badge-pill bg-dark text-white">En preparación</span>
+                                                                    <span class="btn-block badge badge-pill bg-dark text-white">En preparación</span>
                                                                 {% elif data.state == "El proyecto se canceló" %}
-                                                                    <span class="btn btn-block badge badge-pill bg-danger text-white">Proyecto cancelado</span>
+                                                                    <span class="btn-block badge badge-pill bg-danger text-white">Proyecto cancelado</span>
                                                                 {% elif data.state == "El proyecto finalizó" %}
-                                                                    <span class="btn btn-block badge badge-pill bg-danger text-white">Proyecto finalizado</span>
+                                                                    <span class="btn-block badge badge-pill bg-danger text-white">Proyecto finalizado</span>
                                                                 {% endif %}
                                                             {% else %}
-                                                                <span class="btn btn-block badge badge-pill bg-secondary text-white">No hay información</span>
+                                                                <span class="btn-block badge badge-pill bg-secondary text-white">No hay información</span>
                                                             {% endif %}
                                                         {% endif %}
                                                     {% endfor %}
