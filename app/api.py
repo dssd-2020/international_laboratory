@@ -120,9 +120,9 @@ def get_result_by_protocol(protocol_project, activities_checked):
     if approved:
         protocol_project.approved = True
     protocol_project.save()
-    notify(protocol_project.responsible, protocol_project.project, protocol_project.protocol)
+    notify(protocol_project.responsible, False, protocol_project.project, protocol_project.protocol)
     if not approved:
-        notify(protocol_project.project.project_manager, protocol_project.project, protocol_project.protocol)
+        notify(protocol_project.project.project_manager, True, protocol_project.project, protocol_project.protocol)
     logging.info('El resultado del protocolo fue %s', "aprobado" if approved else "desaprobado")
     return approved
 
@@ -141,9 +141,9 @@ def set_result_remote_protocol(request, pk):
             protocol_project.approved = data["approved"]
             protocol_project.result = data["points"]
             protocol_project.save()
-            notify(protocol_project.responsible, protocol_project.project, protocol_project.protocol)
+            notify(protocol_project.responsible, False, protocol_project.project, protocol_project.protocol)
             if not approved:
-                notify(protocol_project.project.project_manager, protocol_project.project, protocol_project.protocol)
+                notify(protocol_project.project.project_manager, True, protocol_project.project, protocol_project.protocol)
             return JsonResponse(
                 {'message': "El protocolo fue actualizado", 'status': status.HTTP_200_OK})
     except ProtocolProject.DoesNotExist:
@@ -168,7 +168,7 @@ def set_result_project(request, pk):
             project.approved = get_result_by_project(project)
             project.active = False
             project.save()
-            notify(project.project_manager, project)
+            notify(project.project_manager, False, project)
             return JsonResponse(
                 {'message': "El resultado del proyecto fue actualizado", 'approved': project.approved, 'status': status.HTTP_200_OK})
     except Project.DoesNotExist:
@@ -195,9 +195,10 @@ def get_result_by_project(project):
     return approved
 
 
-def notify(user_id, project, protocol=None):
+def notify(user_id, need_resolution, project, protocol=None):
     Notification.objects.create(
         user_id=user_id,
+        need_resolution=need_resolution,
         project=project,
         protocol=protocol
     )

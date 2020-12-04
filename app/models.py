@@ -102,6 +102,7 @@ class Notification(models.Model):
     view = models.BooleanField(_("Leída"), default=False)
     project = models.ForeignKey(Project, verbose_name="Proyecto", on_delete=models.CASCADE)
     protocol = models.ForeignKey(Protocol, verbose_name="Protocolo", blank=True, null=True, on_delete=models.CASCADE)
+    need_resolution = models.BooleanField(_("Necesita resolución ante falla"), default=False)
     updated_at = models.DateTimeField(_("Última modificación"), auto_now=True)
 
     class Meta:
