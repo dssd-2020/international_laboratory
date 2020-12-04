@@ -42,7 +42,9 @@
                                                     {% if data.state == "Protocolo aprobado" %}
                                                         <span class="btn btn-block badge badge-pill bg-success text-white">Aprobado</span>
                                                     {% elif data.state == "En resolución ante falla" %}
-                                                        <span class="btn btn-block badge badge-pill bg-warning text-white">En resolución ante falla</span>
+                                                        <a href="{% url "resolucion_falla" protocol_project=protocol_project.id %}">
+                                                            <span class="btn btn-block badge badge-pill bg-warning text-white">En resolución ante falla</span>
+                                                        </a>
                                                     {% elif data.state == "Protocolo listo para ejecutarse" %}
                                                         <a href="{% url "ejecucion_local" protocol_project=protocol_project.id %}">
                                                             <span class="btn btn-block badge badge-pill bg-primary-blue text-white">Ejecutar</span>
