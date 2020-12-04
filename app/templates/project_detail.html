@@ -51,6 +51,10 @@
                                                         <span class="btn btn-block badge badge-pill bg-primary-blue text-white">En ejecución</span>
                                                     {% elif data.state == "El protocolo se encuentra en preparación" %}
                                                         <span class="btn btn-block badge badge-pill bg-dark text-white">En preparación</span>
+                                                    {% elif data.state == "El proyecto se canceló" %}
+                                                        <span class="btn btn-block badge badge-pill bg-danger text-white">Proyecto cancelado</span>
+                                                    {% elif data.state == "El proyecto finalizó" %}
+                                                        <span class="btn btn-block badge badge-pill bg-danger text-white">Proyecto finalizado</span>
                                                     {% endif %}
                                                 {% else %}
                                                     <span class="btn btn-block badge badge-pill bg-secondary text-white">No hay información</span>
