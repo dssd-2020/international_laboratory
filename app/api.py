@@ -93,7 +93,7 @@ def start_processing(request):
     logging.info('Se solicitó iniciar el procesamiento del proyecto %s en el caso %s', data['project'],
                  data['processInstanceId'])
     try:
-        ProtocolProject.objects.filter(project=data['project']).update(result=None, approved=None, running_task='')
+        ProtocolProject.objects.filter(project=data['project']).update(result=None, approved=None, running_task=None)
         protocol_project = ProtocolProject.objects.filter(project=data['project']).order_by("-protocol__order").first()
         if protocol_project:
             return JsonResponse({"last": str(protocol_project.id)})
